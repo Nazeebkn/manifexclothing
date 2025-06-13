@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management Details - {{ order.id }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #329097;
+            --secondary: #e74c3c;
+            --dark: #2c3e50;
+            --light: #f5f7fa;
+            --text: #333;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --success: #27ae60;
+            --danger: #c0392b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--primary), #2a7a80);
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .sidebar ul li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar ul li.active {
+            background-color: var(--secondary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content {
+            margin-left: 280px;
+            padding: 30px;
+            width: calc(100% - 280px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .header .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .header .user-profile img:hover {
+            transform: scale(1.1);
+        }
+
+        .header .search-bar input {
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            width: 250px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .header .search-bar input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(50, 144, 151, 0.2);
+            outline: none;
+        }
+
+        .order-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .order-section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .order-section h2::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -5px;
+            left: 0;
+        }
+
+        .order-section h3 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--dark);
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .order-details p {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .order-details p strong {
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background-color: var(--light);
+            font-weight: 600;
+            color: var(--dark);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        tr:hover {
+            background-color: rgba(50, 144, 151, 0.05);
+            transition: var(--transition);
+        }
+
+        .back-btn {
+            background: linear-gradient(90deg, var(--secondary), #c0392b);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 500;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(90deg, #c0392b, #a93226);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        select {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text);
+            background-color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(50, 144, 151, 0.2);
+            outline: none;
+        }
+
+        button {
+            background: linear-gradient(90deg, var(--primary), #2a7a80);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #2a7a80, var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(50, 144, 151, 0.3);
+        }
+
+        .table-status-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .messages {
+            margin-bottom: 1.5rem;
+        }
+
+        .messages p {
+            font-size: 1rem;
+            padding: 500;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .messages p.success {
+            color: var(--success);
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .messages p.error {
+            color: var(--danger);
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: 20px;
+                position: relative;
+            }
+            .content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            .order-section {
+                padding: 20px;
+            }
+            table {
+                font-size: 0.85rem;
+            }
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <h3>MANIFEX CLOTHING</h3>
+        </div>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="{% url 'user_management' %}"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="{% url 'product_list' %}"><i class="fas fa-box"></i> Products</a></li>
+            <li><a href="{% url 'category_list' %}"><i class="fas fa-tags"></i> Category</a></li>
+            <li class="active"><a href="{% url 'order_management' %}"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+            <li><a href="{% url 'coupon' %}"><i class="fas fa-ticket-alt"></i> Coupons</a></li>
+            <li><a href="{% url 'offer_list' %}"><i class="fas fa-percentage"></i> Offers</a></li>
+            <li><a href="{% url 'sales_report' %}"><i class="fas fa-chart-line"></i> Sales Report</a></li>
+            <li><a href="{% url 'wallet_management' %}"><i class="fas fa-wallet"></i> Wallet Management</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <div class="header">
+           
+        </div>
+        <div class="order-section">
+            <h2>Order Management Details - {{ order.id }}</h2>
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p class="{% if message.tags == 'success' %}success{% else %}error{% endif %}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <a href="{% url 'order_management' %}" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+            <h3>Order Information</h3>
+            <div class="order-details">
+                <p><strong>Order ID:</strong> {{ order.id }}</p>
+                <p><strong>Customer:</strong> {{ order.user.username }}</p>
+                <p><strong>Date:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</p>
+                <p><strong>Total Amount:</strong> ₹{{ order.total_price }}</p>
+                <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+                <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+                <p><strong>Shipping Address:</strong> {{ order.shipping_address|default:"N/A" }}</p>
+                <p><strong>Discount Applied:</strong> {{ order.discount_applied|yesno:"Yes,No" }}</p>
+                <p><strong>Discount Amount:</strong> ₹{{ order.discount_coupon_amount }}</p>
+            </div>
+            <h3>Order Items</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Variant</th>
+                        <th>Size</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Return Reason</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in order_items_with_total %}
+                    <tr>
+                        <td>{{ entry.item.size.variant.product.name|default:"N/A" }}</td>
+                        <td>{{ entry.item.size.variant|default:"N/A" }}</td>
+                        <td>{{ entry.item.size.size|default:"N/A" }}</td>
+                        <td>{{ entry.item.quantity }}</td>
+                        <td>₹{{ entry.item.price }}</td>
+                        <td>₹{{ entry.total_price }}</td>
+                        <td>{{ entry.item.get_status_display }}</td>
+                        <td>{{ entry.item.return_reason|default:"N/A" }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'update_order_item_status' entry.item.id %}" class="table-status-form">
+                                {% csrf_token %}
+                                <select name="status">
+                                    {% for status_value, status_label in entry.item.ORDER_ITEM_STATUS_CHOICES %}
+                                        <option value="{{ status_value }}" {% if entry.item.status == status_value %}selected{% endif %}>{{ status_label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit"><i class="fas fa-save"></i> Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9">No items found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

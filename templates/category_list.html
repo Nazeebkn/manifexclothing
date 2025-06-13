@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #329097;
+            --secondary: #e74c3c;
+            --dark: #2c3e50;
+            --light: #f5f7fa;
+            --text: #333;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--primary), #2a7a80);
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .sidebar ul li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar ul li.active {
+            background-color: var(--secondary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content {
+            margin-left: 280px;
+            padding: 30px;
+            width: calc(100% - 280px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .header .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .header .user-profile img:hover {
+            transform: scale(1.1);
+        }
+
+        .header .search-bar input {
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            width: 250px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .header .search-bar input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(50, 144, 151, 0.2);
+            outline: none;
+        }
+
+        .category-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .category-section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .category-section h2::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -5px;
+            left: 0;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .account__login--input {
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            padding: 12px 20px;
+            width: 350px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .account__login--input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(50, 144, 151, 0.2);
+            outline: none;
+        }
+
+        .account__login--btn {
+            background: linear-gradient(90deg, var(--secondary), #c0392b);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .account__login--btn:hover {
+            background: linear-gradient(90deg, #c0392b, #a93226);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .clear-btn {
+            background: #95a5a6;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 500;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .clear-btn:hover {
+            background: #7f8c8d;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
+        }
+
+        .add-category-btn {
+            background: linear-gradient(90deg, var(--primary), #2a7a80);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 500;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+            float: right;
+        }
+
+        .add-category-btn:hover {
+            background: linear-gradient(90deg, #2a7a80, var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(50, 144, 151, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background-color: var(--light);
+            font-weight: 600;
+            color: var(--dark);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        tr:hover {
+            background-color: rgba(50, 144, 151, 0.05);
+            transition: var(--transition);
+        }
+
+        td img {
+            max-width: 60px;
+            max-height: 60px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        td img:hover {
+            transform: scale(1.1);
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-right: 10px;
+        }
+
+        .edit-btn {
+            background-color: #0284c7;
+        }
+
+        .edit-btn:hover {
+            background-color: #0369a1;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(2, 132, 199, 0.3);
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .list-btn {
+            background-color: #27ae60;
+        }
+
+        .list-btn:hover {
+            background-color: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(39, 174, 96, 0.3);
+        }
+
+        .pagination {
+            margin-top: 30px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .pagination a {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: var(--secondary);
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            transition: var(--transition);
+        }
+
+        .pagination a:hover {
+            background-color: var(--secondary);
+            color: white;
+            box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .pagination span {
+            padding: 10px 20px;
+            color: var(--text);
+        }
+
+        .error, .success {
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            color: #c0392b;
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        .success {
+            color: #27ae60;
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <h3>MANIFEX CLOTHING</h3>
+        </div>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="{% url 'user_management' %}"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="{% url 'product_list' %}"><i class="fas fa-box"></i> Products</a></li>
+            <li class="active"><a href="{% url 'category_list' %}"><i class="fas fa-tags"></i> Category</a></li>
+            <li><a href="{% url 'order_management' %}"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+            <li><a href="{% url 'coupon' %}"><i class="fas fa-ticket-alt"></i> Coupons</a></li>
+            <li><a href="{% url 'offer_list' %}"><i class="fas fa-percentage"></i> Offers</a></li>
+            <li><a href="{% url 'sales_report' %}"><i class="fas fa-chart-line"></i> Sales Report</a></li>
+            <li><a href="{% url 'wallet_management' %}"><i class="fas fa-wallet"></i> Wallet Management</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <div class="header">
+          
+            
+        </div>
+        <div class="category-section">
+            <h2>Category Management</h2>
+            <a href="{% url 'add_category' %}" class="add-category-btn"><i class="fas fa-plus"></i> Add Category</a>
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="{% if message.tags == 'success' %}success{% else %}error{% endif %}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+            <form method="get" action="" class="search-form">
+                <input class="account__login--input" type="text" name="search" value="{{ search_query }}" placeholder="Search by category name">
+                <button class="account__login--btn" type="submit"><i class="fas fa-search"></i> Search</button>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>    
+                        <th>Image</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in page_obj %}
+                    <tr>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.description|default:"No description" }}</td>
+                        <td><img src="{{ category.image.url }}" alt="{{ category.name }}" style="max-width: 60px; max-height: 60px;"></td>
+                        <td>
+                            <a href="{% url 'edit_category' category.id %}" class="action-btn edit-btn"><i class="fas fa-edit"></i> Edit</a>
+                            <a href="{% url 'Unlist_category' category.id %}" class="action-btn {% if category.is_listed %}delete-btn{% else %}list-btn{% endif %}">
+                                <i class="fas {% if category.is_listed %}fa-ban{% else %}fa-check{% endif %}"></i>
+                                {% if category.is_listed %}Unlist{% else %}List{% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"><i class="fas fa-chevron-left"></i> Previous</a>
+                {% endif %}
+                <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Next <i class="fas fa-chevron-right"></i></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

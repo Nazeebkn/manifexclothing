@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - MANIFEX CLOTHING</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #329097;
+            --secondary: #e74c3c;
+            --dark: #2c3e50;
+            --light: #f5f7fa;
+            --text: #333;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--primary), #2a7a80);
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar .logo img {
+            width: 120px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .sidebar h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .sidebar ul li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar ul li.active {
+            background-color: var(--secondary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content {
+            margin-left: 280px;
+            padding: 30px;
+            width: calc(100% - 280px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .header .user-profile img {
+            width: 40px;
+            height: 40px;
+            border探索
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .header .user-profile img:hover {
+            transform: scale(1.1);
+        }
+
+        .header .search-bar input {
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            width: 250px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .header .search-bar input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(50, 144, 151, 0.2);
+            outline: none;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .overview-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .overview-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .overview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .overview-card .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .overview-card h4 {
+            margin: 0;
+            font-size: 1rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .overview-card p {
+            margin: 10px 0 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .filter-section {
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .filter-section label {
+            font-size: 1rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .filter-section select {
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .filter-section select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(50, 144, 151, 0.2);
+            outline: none;
+        }
+
+        .filter-section button {
+            background: linear-gradient(90deg, var(--primary), #2a7a80);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-section button:hover {
+            background: linear-gradient(90deg, #2a7a80, var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(50, 144, 151, 0.3);
+        }
+
+        .orders-section, .top-products-section, .top-categories-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -5px;
+            left: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background-color: var(--light);
+            font-weight: 600;
+            color: var(--dark);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        tr:hover {
+            background-color: rgba(50, 144, 151, 0.05);
+            transition: var(--transition);
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 25px;
+            color: white;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-cancelled { background-color: #e74c3c; }
+        .status-returned { background-color: #7f8c8d; }
+        .status-delivered { background-color: #27ae60; }
+        .status-processing { background-color: #f39c12; }
+        .status-pending { background-color: #3498db; }
+
+        .action-btn {
+            padding: 8px 15px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(90deg, var(--primary), #2a7a80);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(90deg, #2a7a80, var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(50, 144, 151, 0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .overview-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            .overview-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <h3>MANIFEX CLOTHING</h3>
+        </div>
+        <ul>
+            <li class="active"><a href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="{% url 'user_management' %}"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="{% url 'product_list' %}"><i class="fas fa-box"></i> Products</a></li>
+            <li><a href="{% url 'category_list' %}"><i class="fas fa-tags"></i> Category</a></li>
+            <li><a href="{% url 'order_management' %}"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+            <li><a href="{% url 'coupon' %}"><i class="fas fa-ticket-alt"></i> Coupons</a></li>
+            <li><a href="{% url 'offer_list' %}"><i class="fas fa-percentage"></i> Offers</a></li>
+            <li><a href="{% url 'sales_report' %}"><i class="fas fa-chart-line"></i> Sales Report</a></li>
+            <li><a href="{% url 'wallet_management' %}"><i class="fas fa-wallet"></i> Wallet Management</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+  
+
+        <h1>Admin Dashboard</h1>
+
+        <div class="overview-section">
+            <div class="overview-card">
+                <div class="icon" style="background-color: #ffe5b4;"><i class="fas fa-users"></i></div>
+                <h4>Total Customers</h4>
+                <p>{{ total_customers }}</p>
+            </div>
+            <div class="overview-card">
+                <div class="icon" style="background-color: #b3e5fc;"><i class="fas fa-rupee-sign"></i></div>
+                <h4>Total Revenue</h4>
+                <p>₹{{ total_revenue }}</p>
+            </div>
+            <div class="overview-card">
+                <div class="icon" style="background-color: #c8e6c9;"><i class="fas fa-shopping-cart"></i></div>
+                <h4>Total Orders</h4>
+                <p>{{ total_orders }}</p>
+            </div>
+            <div class="overview-card">
+                <div class="icon" style="background-color: #d1c4e9;"><i class="fas fa-box"></i></div>
+                <h4>Total Products</h4>
+                <p>{{ total_products }}</p>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div>
+                <label for="timePeriod">Time Period</label>
+                <select id="timePeriod" name="time_period">
+                    <option value="all">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="last_7_days">Last 7 Days</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+            <div>
+                <label for="orderStatus">Order Status</label>
+                <select id="orderStatus" name="order_status">
+                    <option value="all">All Statuses</option>
+                    <option value="processing">Processing</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                    <option value="canceled">Canceled</option>
+                    <option value="returned">Returned</option>
+                </select>
+            </div>
+            <button onclick="applyFilters()"><i class="fas fa-filter"></i> Apply Filters</button>
+        </div>
+
+        <div class="orders-section">
+            <h2>Recent Orders</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in recent_orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.user.username }}</td>
+                        <td>{{ order.created_at|date:"d/m/Y" }}</td>
+                        <td>₹{{ order.total_price }}</td>
+                        <td>
+                            <span class="status status-{{ order.status }}">{{ order.status|capfirst }}</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-gray-500">No recent orders available</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="top-products-section">
+                <h2>Top Selling Products</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Sales</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in top_products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.total_sold }}</td>
+                            <td>₹{{ product.sales }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-gray-500">No top selling products available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="top-categories-section">
+                <h2>Top 10 Best Selling Categories</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Quantity Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in top_categories %}
+                        <tr>
+                            <td>{{ category.name }}</td>
+                            <td>{{ category.total_sold }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" class="text-center text-gray-500">No top categories available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function applyFilters() {
+            const timePeriod = document.getElementById('timePeriod').value;
+            const orderStatus = document.getElementById('orderStatus').value;
+            try {
+                const response = await fetch("{% url 'dashboard_data' %}?time_period=" + timePeriod + "&order_status=" + orderStatus);
+                const data = await response.json();
+
+                document.querySelector('.overview-card:nth-child(1) p').textContent = data.total_customers;
+                document.querySelector('.overview-card:nth-child(2) p').textContent = `₹${data.total_revenue}`;
+                document.querySelector('.overview-card:nth-child(3) p').textContent = data.total_orders;
+                document.querySelector('.overview-card:nth-child(4) p').textContent = data.total_products;
+
+                const ordersTable = document.querySelector('.orders-section tbody');
+                ordersTable.innerHTML = '';
+                if (data.recent_orders.length === 0) {
+                    ordersTable.innerHTML = '<tr><td colspan="5" class="text-center text-gray-500">No recent orders available</td></tr>';
+                } else {
+                    data.recent_orders.forEach(order => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${order.id}</td>
+                            <td>${order.user}</td>
+                            <td>${order.created_at}</td>
+                            <td>₹${order.total_price}</td>
+                            <td><span class="status status-${order.status.toLowerCase()}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span></td>
+                        `;
+                        ordersTable.appendChild(row);
+                    });
+                }
+
+                const productsTable = document.querySelector('.top-products-section tbody');
+                productsTable.innerHTML = '';
+                if (data.top_products.length === 0) {
+                    productsTable.innerHTML = '<tr><td colspan="3" class="text-center text-gray-500">No top selling products available</td></tr>';
+                } else {
+                    data.top_products.forEach(product => {
+                        const row = document.createElement('tr');
+                        const productName = product.name || 'Unknown Product';
+                        row.innerHTML = `
+                            <td>${productName}</td>
+                            <td>${product.total_sold}</td>
+                            <td>₹${product.sales}</td>
+                        `;
+                        productsTable.appendChild(row);
+                    });
+                }
+
+                const categoriesTable = document.querySelector('.top-categories-section tbody');
+                categoriesTable.innerHTML = '';
+                if (data.top_categories.length === 0) {
+                    categoriesTable.innerHTML = '<tr><td colspan="2" class="text-center text-gray-500">No top categories available</td></tr>';
+                } else {
+                    data.top_categories.forEach(category => {
+                        const row = document.createElement('tr');
+                        const categoryName = category.name || 'Unknown Category';
+                        row.innerHTML = `
+                            <td>${categoryName}</td>
+                            <td>${category.total_sold}</td>
+                        `;
+                        categoriesTable.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            }
+        }
+
+        applyFilters();
+    </script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Details - MANIFEX CLOTHING</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #329097;
+            --secondary: #e74c3c;
+            --dark: #2c3e50;
+            --light: #f5f7fa;
+            --text: #333;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --success: #27ae60;
+            --danger: #c0392b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--primary), #2a7a80);
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .sidebar ul li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar ul li.active {
+            background-color: var(--secondary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content {
+            margin-left: 280px;
+            padding: 30px;
+            width: calc(100% - 280px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .details-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .details-section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .details-section h2::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -5px;
+            left: 0;
+        }
+
+        .details-section dl {
+            display: grid;
+            grid-template-columns: max-content auto;
+            gap: 15px 20px;
+            margin-bottom: 20px;
+        }
+
+        .details-section dt {
+            font-weight: 600;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        .details-section dd {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(90deg, var(--primary), #2a7a80);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(90deg, #2a7a80, var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(50, 144, 151, 0.3);
+        }
+
+        .transaction-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .transaction-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            .details-section {
+                padding: 20px;
+            }
+            .details-section dl {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .details-section dt {
+                color: var(--dark);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <h3>MANIFEX CLOTHING</h3>
+        </div>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="{% url 'user_management' %}"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="{% url 'product_list' %}"><i class="fas fa-box"></i> Products</a></li>
+            <li><a href="{% url 'category_list' %}"><i class="fas fa-tags"></i> Category</a></li>
+            <li><a href="{% url 'order_management' %}"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+            <li><a href="{% url 'coupon' %}"><i class="fas fa-ticket-alt"></i> Coupons</a></li>
+            <li><a href="{% url 'offer_list' %}"><i class="fas fa-percentage"></i> Offers</a></li>
+            <li><a href="{% url 'sales_report' %}"><i class="fas fa-chart-line"></i> Sales Report</a></li>
+            <li class="active"><a href="{% url 'wallet_management' %}"><i class="fas fa-wallet"></i> Wallet Management</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <!-- Header content if needed -->
+        </div>
+
+        <div class="transaction-header">
+            <h1>Transaction Details</h1>
+        </div>
+
+        <div class="details-section">
+            <h2>Transaction Information</h2>
+            <dl>
+                <dt><i class="fas fa-user"></i> User Details:</dt>
+                <dd>{{ user.username }} ({{ user.email }})</dd>
+                
+                <dt><i class="fas fa-id-card"></i> Transaction ID:</dt>
+                <dd>{{ transaction.transaction_id }}</dd>
+                
+                <dt><i class="fas fa-calendar-alt"></i> Transaction Date:</dt>
+                <dd>{{ transaction.created_at|date:"d/m/Y H:i" }}</dd>
+                
+                <dt><i class="fas fa-exchange-alt"></i> Transaction Type:</dt>
+                <dd>{{ transaction.transaction_type|capfirst }}</dd>
+                
+                <dt><i class="fas fa-info-circle"></i> Source of Transaction:</dt>
+                <dd>
+                    {{ source }}
+                    {% if order_link %}
+                    <a href="{% url 'order_management_details' transaction.order.id %}" class="action-btn"><i class="fas fa-eye"></i> View Order Details</a>
+                    {% endif %}
+                </dd>
+            </dl>
+        </div>
+    </div>
+</body>
+</html>

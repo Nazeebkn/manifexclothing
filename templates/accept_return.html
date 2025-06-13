@@ -1,0 +1,79 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block content %}
+  <section class="return__section section--padding">
+    <div class="container">
+      <h2 class="account__content--title mb-20">Accept Return</h2>
+      <div class="return__form">
+        <h4>Order Item: {{ order_item.product.name }}</h4>
+        <p>Order ID: {{ order_item.order.id }}</p>
+        <p>Return Reason: {{ order_item.return_reason }}</p>
+        <p>Requested At: {{ order_item.return_requested_at|date:"F j, Y, g:i A" }}</p>
+        <form method="POST" action="{% url 'accept_return' item_id %}">
+          {% csrf_token %}
+          <p>Are you sure you want to accept this return and credit the refund to the user’s wallet?</p>
+          <button type="submit" class="btn btn--primary">Accept Return</button>
+          <a href="{% url 'admin_order_details' order_id=order_item.order.id %}" class="btn btn--secondary">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+<style>
+  .return__section {
+    padding: 40px 0;
+  }
+  .account__content--title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #222;
+  }
+  .return__form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    max-width: 600px;
+  }
+  .return__form h4 {
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .return__form p {
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .btn--primary {
+    background-color: #ff4d4f;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.4rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .btn--primary:hover {
+    background-color: #e64446;
+  }
+  .btn--secondary {
+    background-color: #6c757d;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.4rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s;
+  }
+  .btn--secondary:hover {
+    background-color: #5a6268;
+  }
+</style>

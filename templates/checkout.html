@@ -1,0 +1,971 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Suruchi - Checkout</title>
+  <meta name="description" content="Morden Bootstrap HTML5 Template">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/swiper-bundle.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/glightbox.min.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'assets/css/vendor/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    .alert {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .coupon__section {
+      margin-bottom: 30px;
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    .coupon__section--form {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .coupon__section--input {
+      flex: 1;
+      padding: 10px 15px;
+      border: 1px solid #ced4da;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+    .coupon__section--input:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
+    .coupon__section--button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+    .coupon__section--button.apply {
+      background-color: #28a745;
+      color: white;
+    }
+    .coupon__section--button.remove {
+      background-color: #dc3545;
+      color: white;
+    }
+    .coupon__section--button:hover {
+      filter: brightness(90%);
+    }
+    .coupon__section--button:active {
+      transform: scale(0.98);
+    }
+    .coupon__applied {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      background-color: #e9f7ef;
+      border: 1px solid #28a745;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .coupon__applied--info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .coupon__applied--code {
+      font-size: 14px;
+      color: #155724;
+    }
+    .coupon__applied--discount {
+      font-size: 12px;
+      color: #28a745;
+      font-weight: 500;
+    }
+    /* Styles for Available Coupons */
+    .coupon__available {
+      margin-top: 20px;
+    }
+    .coupon__available--title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .coupon__available--list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .coupon__available--item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 5px;
+      margin-bottom: 8px;
+      transition: box-shadow 0.3s ease;
+    }
+    .coupon__available--item:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .coupon__available--info {
+      flex: 1;
+    }
+    .coupon__available--code {
+      font-size: 14px;
+      color: #007bff;
+    }
+    .coupon__available--discount {
+      font-size: 12px;
+      color: #28a745;
+      font-weight: 500;
+    }
+    .coupon__available--desc {
+      font-size: 12px;
+      color: #666;
+      margin: 4px 0 0 0;
+    }
+    .coupon__available--apply-btn {
+      padding: 6px 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+    .coupon__available--apply-btn:hover {
+      background-color: #0056b3;
+    }
+    .coupon__available--apply-btn:active {
+      transform: scale(0.98);
+    }
+    .coupon__available--empty {
+      font-size: 14px;
+      color: #666;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Start preloader -->
+  <div id="preloader">
+    <div id="ctn-preloader" class="ctn-preloader">
+      <div class="animation-preloader">
+        <div class="spinner"></div>
+        <div class="txt-loading">
+          <span data-text-preloader="L" class="letters-loading">L</span>
+          <span data-text-preloader="O" class="letters-loading">O</span>
+          <span data-text-preloader="A" class="letters-loading">A</span>
+          <span data-text-preloader="D" class="letters-loading">D</span>
+          <span data-text-preloader="I" class="letters-loading">I</span>
+          <span data-text-preloader="N" class="letters-loading">N</span>
+          <span data-text-preloader="G" class="letters-loading">G</span>
+        </div>
+      </div>
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+    </div>
+  </div>
+  <!-- End preloader -->
+
+  <!-- Start header area -->
+  <header class="header__section">
+    <div class="main__header header__sticky">
+      <div class="container-fluid">
+        <div class="main__header--inner position__relative d-flex justify-content-between align-items-center">
+          <div class="offcanvas__header--menu__open">
+            <a class="offcanvas__header--menu__open--btn" href="javascript:void(0)" data-offcanvas>
+              <svg xmlns="http://www.w3.org/2000/svg" class="ionicon offcanvas__header--menu__open--svg" viewBox="0 0 512 512"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M80 160h352M80 256h352M80 352h352"/></svg>
+              <span class="visually-hidden">Menu Open</span>
+            </a>
+          </div>
+          <div class="main__logo">
+            <h1>MANIFEX CLOTHING</h1>
+          </div>
+          <div class="header__account header__sticky--none">
+            <ul class="d-flex">
+              <li class="header__account--items">
+                <a class="header__account--btn" href="{% url 'my_profile' %}">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="26.51" height="23.443" viewBox="0 0 512 512"><path d="M344 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M256 304c-87 0-175.3 48-191.64 138.6C62.39 453.52 68.57 464 80 464h352c11.44 0 17.62-10.48 15.65-21.4C431.3 352 343 304 256 304z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/></svg>
+                  <span class="header__account--btn__text">My Account</span>
+                </a>
+              </li>
+              <li class="header__account--items d-none d-lg-block">
+                <a class="header__account--btn" href="{% url 'wishlist' %}">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28.51" height="23.443" viewBox="0 0 512 512"><path d="M352.92 80C288 80 256 144 256 144s-32-64-96.92-64c-52.76 0-94.54 44.14-95.08 96.81-1.1 109.33 86.73 187.08 183 252.42a16 16 0 0018 0c96.26-65.34 184.09-143.09 183-252.42-.54-52.67-42.32-96.81-95.08-96.81z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"></path></svg>
+                  <span class="header__account--btn__text">Wish List</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="header__menu d-none header__sticky--block d-lg-block">
+            <nav class="header__menu--navigation">
+              <ul class="d-flex">
+                <li class="header__menu--items style2">
+                  <a class="header__menu--link" href="{% url 'index' %}">Home</a>
+                </li>
+                <li class="header__menu--items style2">
+                  <a class="header__menu--link" href="{% url 'about' %}">About US</a>
+                </li>
+                <li class="header__menu--items style2">
+                  <a class="header__menu--link" href="{% url 'contact' %}">Contact</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="header__account header__account2 header__sticky--block">
+            <ul class="d-flex">
+              <li class="header__account--items header__account2--items">
+                <a class="header__account--btn" href="{% url 'my_profile' %}">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="26.51" height="23.443" viewBox="0 0 512 512"><path d="M344 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M256 304c-87 0-175.3 48-191.64 138.6C62.39 453.52 68.57 464 80 464h352c11.44 0 17.62-10.48 15.65-21.4C431.3 352 343 304 256 304z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/></svg>
+                  <span class="visually-hidden">My Account</span>
+                </a>
+              </li>
+              <li class="header__account--items header__account2--items d-none d-lg-block">
+                <a class="header__account--btn" href="{% url 'wishlist' %}">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28.51" height="23.443" viewBox="0 0 512 512"><path d="M352.92 80C288 80 256 144 256 144s-32-64-96.92-64c-52.76 0-94.54 44.14-95.08 96.81-1.1 109.33 86.73 187.08 183 252.42a16 16 0 0018 0c96.26-65.34 184.09-143.09 183-252.42-.54-52.67-42.32-96.81-95.08-96.81z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"></path></svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header__bottom">
+      <div class="container-fluid">
+        <div class="header__bottom--inner position__relative d-none d-lg-flex justify-content-between align-items-center">
+          <div class="header__menu">
+            <nav class="header__menu--navigation">
+              <ul class="d-flex">
+                <li class="header__menu--items">
+                  <a class="header__menu--link" href="{% url 'index' %}">Home</a>
+                </li>
+                <li class="header__menu--items mega__menu--items">
+                  <a class="header__menu--link" href="{% url 'shop' %}">Shop</a>
+                </li>
+                <li class="header__menu--items">
+                  <a class="header__menu--link" href="{% url 'about' %}">About US</a>
+                </li>
+                <li class="header__menu--items">
+                  <a class="header__menu--link" href="{% url 'contact' %}">Contact</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Offcanvas header menu and other components -->
+    <div class="offcanvas__header">
+      <div class="offcanvas__inner">
+        <div class="offcanvas__logo">
+          <a class="offcanvas__logo_link" href="index.html">
+            <img src="{% static 'assets/img/logo/nav-log.png' %}" alt="Grocee Logo" width="158" height="36">
+          </a>
+          <button class="offcanvas__close--btn" data-offcanvas>close</button>
+        </div>
+        <nav class="offcanvas__menu">
+          <ul class="offcanvas__menu_ul">
+            <li class="offcanvas__menu_li"><a class="offcanvas__menu_item" href="index.html">Home</a></li>
+            <li class="offcanvas__menu_li"><a class="offcanvas__menu_item" href="shop.html">Shop</a></li>
+            <li class="offcanvas__menu_li"><a class="offcanvas__menu_item" href="about.html">About</a></li>
+            <li class="offcanvas__menu_li"><a class="offcanvas__menu_item" href="contact.html">Contact</a></li>
+          </ul>
+          <div class="offcanvas__account--items">
+            <a class="offcanvas__account--items__btn d-flex align-items-center" href="login.html">
+              <span class="offcanvas__account--items__icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20.51" height="19.443" viewBox="0 0 512 512"><path d="M344 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M256 304c-87 0-175.3 48-191.64 138.6C62.39 453.52 68.57 464 80 464h352c11.44 0 17.62-10.48 15.65-21.4C431.3 352 343 304 256 304z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/></svg>
+              </span>
+              <span class="offcanvas__account--items__label">Login / Register</span>
+            </a>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <div class="offcanvas__stikcy--toolbar">
+      <ul class="d-flex justify-content-between">
+        <li class="offcanvas__stikcy--toolbar__list">
+          <a class="offcanvas__stikcy--toolbar__btn" href="index.html">
+            <span class="offcanvas__stikcy--toolbar__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="21.51" height="21.443" viewBox="0 0 22 17"><path fill="currentColor" d="M20.9141 7.93359c.1406.11719.2109.26953.2109.45703 0 .14063-.0469.25782-.1406.35157l-.3516.42187c-.1172.14063-.2578.21094-.4219.21094-.1406 0-.2578-.04688-.3515-.14062l-.9844-.77344V15c0 .3047-.1172.5625-.3516.7734-.2109.2344-.4687.3516-.7734.3516h-4.5c-.3047 0-.5742-.1172-.8086-.3516-.2109-.2109-.3164-.4687-.3164-.7734v-3.6562(url-of-a-placeholder-image)"></path></svg>
+            </span>
+            <span class="offcanvas__stikcy--toolbar__label">Home</span>
+          </a>
+        </li>
+        <li class="offcanvas__stikcy--toolbar__list">
+          <a class="offcanvas__stikcy--toolbar__btn" href="shop.html">
+            <span class="offcanvas__stikcy--toolbar__icon">
+              <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="18.51" height="17.443" viewBox="0 0 448 512"><path d="M416 32H32A32 32 0 0 0 0 64v384a32 32 0 0 0 32 32h384a32 32 0 0 0 32-32V64a32 32 0 0 0-32-32zm-16 48v152H248V80zm-200 0v152H48V80zM48 432V280h152v152zm200 0V280h152v152z"></path></svg>
+            </span>
+            <span class="offcanvas__stikcy--toolbar__label">Shop</span>
+          </a>
+        </li>
+        <li class="offcanvas__stikcy--toolbar__list">
+          <a class="offcanvas__stikcy--toolbar__btn search__open--btn" href="javascript:void(0)" data-offcanvas>
+            <span class="offcanvas__stikcy--toolbar__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22.51" height="20.443" viewBox="0 0 512 512"><path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/></svg>
+            </span>
+            <span class="offcanvas__stikcy--toolbar__label">Search</span>
+          </a>
+        </li>
+        <li class="offcanvas__stikcy--toolbar__list">
+          <a class="offcanvas__stikcy--toolbar__btn minicart__open--btn" href="javascript:void(0)" data-offcanvas>
+            <span class="offcanvas__stikcy--toolbar__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18.51" height="15.443" viewBox="0 0 18.51 15.443"><path d="M79.963,138.379l-13.358,0-.56-1.927a.871.871,0,0,0-.6-.592l-1.961-.529a.91.91,0,0,0-.226-.03.864.864,0,0,0-.226,1.7l1.491.4,3.026,10.919a1.277,1.277,0,1,0,1.844,1.144.358.358,0,0,0,0-.049h6.163c0,.017,0,.034,0,.049a1.277,1.277,0,1,0,1.434-1.267c-1.531-.247-7.783-.55-7.783-.55l-.205-.8h7.8a.9.9,0,0,0,.863-.651l1.688-5.943h.62a.936.936,0,1,0,0-1.872Zm-9.934,6.474H68.568c-.04,0-.1.008-.125-.085-.034-.118-.082-.283-.082-.283l-1.146-4.037a.061.061,0,0,1,.011-.057.064.064,0,0,1,.053-.025h1.777a.064.064,0,0,1,.063.051l.969,4.34,0,.013a.058.058,0,0,1,0,.019A.063.063,0,0,1,70.03,144.853Zm3.731-4.41-.789,4.359a.066.066,0,0,1-.063.051h-1.1a.064.064,0,0,1-.063-.051l-.789-4.357a.064.064,0,0,1,.013-.055.07.07,0,0,1,.051-.025H73.7a.06.06,0,0,1,.051.025A.064.064,0,0,1,73.76,140.443Zm3.737,0L76.26,144.8a.068.068,0,0,1-.063.049H74.684a.063.063,0,0,1-.051-.025.064.064,0,0,1-.013-.055l.973-4.357a.066.066,0,0,1,.063-.051h1.777a.071.071,0,0,1,.053.025A.076.076,0,0,1,77.5,140.448Z" transform="translate(-62.393 -135.3)" fill="currentColor"/></svg>
+            </span>
+            <span class="offcanvas__stikcy--toolbar__label">Cart</span>
+            <span class="items__count">3</span>
+          </a>
+        </li>
+        <li class="offcanvas__stikcy--toolbar__list">
+          <a class="offcanvas__stikcy--toolbar__btn" href="wishlist.html">
+            <span class="offcanvas__stikcy--toolbar__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18.541" height="15.557" viewBox="0 0 18.541 15.557"><path d="M71.775,135.51a5.153,5.153,0,0,1,1.267-1.524,4.986,4.986,0,0,1,6.584.358,4.728,4.728,0,0,1,1.174,4.914,10.458,10.458,0,0,1-2.132,3.808,22.591,22.591,0,0,1-5.4,4.558c-.445.282-.9.549-1.356.812a.306.306,0,0,1-.254.013,25.491,25.491,0,0,1-6.279-4.8,11.648,11.648,0,0,1-2.52-4.009,4.957,4.957,0,0,1,.028-3.787,4.629,4.629,0,0,1,3.744-2.863,4.782,4.782,0,0,1,5.086,2.447c.013.019.025.034.057.076Z" transform="translate(-62.498 -132.915)" fill="currentColor"/></svg>
+            </span>
+            <span class="offcanvas__stikcy--toolbar__label">Wishlist</span>
+            <span class="items__count">3</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="offCanvas__minicart">
+      <div class="minicart__header">
+        <div class="minicart__header--top d-flex justify-content-between align-items-center">
+          <h2 class="minicart__title h3">Shopping Cart</h2>
+          <button class="minicart__close--btn" aria-label="minicart close button" data-offcanvas>
+            <svg class="minicart__close--icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 368L144 144M368 144L144 368"/></svg>
+          </button>
+        </div>
+        <p class="minicart__header--desc">Clothing and fashion products are limited</p>
+      </div>
+      <div class="minicart__product">
+        {% for item in cart_items %}
+        <div class="minicart__product--items d-flex">
+          <div class="minicart__thumb">
+            <a href="{% url 'product_details' item.variant.product.id %}"><img src="{{ item.variant.product.image.url }}" alt="{{ item.variant.product.name }}"></a>
+          </div>
+          <div class="minicart__text">
+            <h3 class="minicart__subtitle h4"><a href="{% url 'product_details' item.variant.product.id %}">{{ item.variant.product.name }}</a></h3>
+            <span class="color__variant"><b>Color:</b> {{ item.variant.color }}</span>
+            <span class="color__variant"><b>Size:</b> {{ item.size.size }}</span>
+            <div class="minicart__price">
+              <span class="current__price">₹{{ item.get_total_price|floatformat:2 }}</span>
+            </div>
+            <div class="minicart__text--footer d-flex align-items-center">
+              <div class="quantity__box minicart__quantity">
+                <button type="button" class="quantity__value decrease" data-item-id="{{ item.id }}" aria-label="quantity value" value="Decrease Value">-</button>
+                <label>
+                  <input type="number" class="quantity__number" value="{{ item.quantity }}" data-counter readonly/>
+                </label>
+                <button type="button" class="quantity__value increase" data-item-id="{{ item.id }}" aria-label="quantity value" value="Increase Value" {% if item.size.stock == 0 %}disabled{% endif %}>+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="minicart__amount">
+        <div class="minicart__amount_list d-flex justify-content-between">
+          <span>Sub Total:</span>
+          <span><b>₹{{ subtotal|floatformat:2 }}</b></span>
+        </div>
+        <div class="minicart__amount_list d-flex justify-content-between">
+          <span>Total:</span>
+          <span><b>₹{{ final_total|floatformat:2 }}</b></span>
+        </div>
+      </div>
+      <div class="minicart__button d-flex justify-content-center">
+        <a class="primary__btn minicart__button--link" href="{% url 'cart' %}">View cart</a>
+        <a class="primary__btn minicart__button--link" href="{% url 'checkout' %}">Checkout</a>
+      </div>
+    </div>
+    <div class="predictive__search--box">
+      <div class="predictive__search--box__inner">
+        <h2 class="predictive__search--title">Search Products</h2>
+        <form class="predictive__search--form" action="#">
+          <label>
+            <input class="predictive__search--input" placeholder="Search Here" type="text">
+          </label>
+          <button class="predictive__search--button" aria-label="search button" type="submit"><svg class="header__search--button__svg" xmlns="http://www.w3.org/2000/svg" width="30.51" height="25.443" viewBox="0 0 512 512"><path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/></svg></button>
+        </form>
+      </div>
+      <button class="predictive__search--close__btn" aria-label="search close button" data-offcanvas>
+        <svg class="predictive__search--close__icon" xmlns="http://www.w3.org/2000/svg" width="40.51" height="30.443" viewBox="0 0 512 512"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 368L144 144M368 144L144 368"/></svg>
+      </button>
+    </div>
+  </header>
+  <!-- End header area -->
+
+  <main class="main__content_wrapper">
+    <!-- Start breadcrumb section -->
+    <section class="breadcrumb__section breadcrumb__bg">
+      <div class="container">
+        <div class="row row-cols-1">
+          <div class="col">
+            <div class="breadcrumb__content text-center">
+              <h1 class="breadcrumb__content--title text-white mb-25">Checkout</h1>
+              <ul class="breadcrumb__content--menu d-flex justify-content-center">
+                <li class="breadcrumb__content--menu__items"><a class="text-white" href="{% url 'index' %}">Home</a></li>
+                <li class="breadcrumb__content--menu__items"><a class="text-white" href="{% url 'cart' %}">Cart</a></li>
+                <li class="breadcrumb__content--menu__items"><span class="text-white">Checkout</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End breadcrumb section -->
+
+    <!-- Checkout section start -->
+    <section class="cart__section section--padding">
+      <div class="container-fluid">
+        <div class="cart__section--inner">
+          <form action="{% url 'placeorder' %}" method="POST">
+            {% csrf_token %}
+            <h2 class="cart__title mb-40">Checkout</h2>
+            {% if messages %}
+              <div class="messages">
+                {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+            <div class="row">
+              <div class="col-lg-8">
+                <!-- Shipping Address -->
+                <div class="checkout__content--step section__shipping--address mb-30">
+                  <div class="section__header mb-25 d-flex align-items-center justify-content-between">
+                    <h3 class="section__header--title">Shipping Address</h3>
+                    <a href="{% url 'checkout_add_address' %}" class="cart__summary--footer__btn primary__btn checkout">Add New Address</a>
+                  </div>
+                  <div class="section__shipping--address__content">
+                    {% for address in addresses %}
+                    <div class="card mb-3 {% if address.is_default %}border-primary{% endif %} address-card">
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div>
+                            <input type="radio" name="address_id" value="{{ address.id }}" {% if address.is_default %}checked{% endif %} required>
+                            <strong>{{ address.street_address }}</strong>
+                            {% if address.is_default %}<span class="badge bg-primary ms-2">Default</span>{% endif %}
+                            <p class="mb-0">{{ address.city }}, {{ address.state }}, {{ address.country }}, {{ address.postal_code }}</p>
+                            <p class="mb-0">Phone: {{ address.phone_number }}</p>
+                          </div>
+                          <a href="{% url 'checkout_edit_address' address.id %}" class="cart__summary--footer__btn primary__btn checkout">Edit</a>
+                        </div>
+                      </div>
+                    </div>
+                    {% empty %}
+                    <p>No addresses found. <a href="{% url 'add_address' %}?next=checkout">Add an address</a> to continue.</p>
+                    {% endfor %}
+                  </div>
+                </div>
+                <!-- Payment Method -->
+                  <!-- <div class="checkout__content--step section__payment--method mb-30">
+                    <div class="section__header mb-25">
+                      <h3 class="section__header--title">Payment Method</h3>
+                    </div>
+                 <div class="section__payment--method__content">
+                  <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod" {% if not cod_allowed %}disabled{% endif %} {% if cod_allowed %}checked{% endif %} required>
+                    <label class="form-check-label" for="cod">
+                      Cash on Delivery
+                      {% if not cod_allowed %}
+                        <span class="text-danger" style="font-size: 12px;">(Not available for orders above ₹1000)</span>
+                      {% endif %}
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="payment_method" id="razorpay" value="razorpay" {% if not cod_allowed %}checked{% endif %} required>
+                    <label class="form-check-label" for="razorpay">Razorpay (Online Payment)</label>
+                  </div>
+                </div>
+                  </div> -->
+
+
+                  <div class="section__payment--method__content">
+                    <div class="form-check mb-3">
+                      <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod" {% if not cod_allowed %}disabled{% endif %} {% if cod_allowed %}checked{% endif %} required>
+                      <label class="form-check-label" for="cod">
+                        Cash on Delivery
+                        {% if not cod_allowed %}
+                          <span class="text-danger" style="font-size: 12px;">(Not available for orders above ₹1000)</span>
+                        {% endif %}
+                      </label>
+                    </div>
+                    <div class="form-check mb-3">
+                      <input class="form-check-input" type="radio" name="payment_method" id="razorpay" value="razorpay" {% if not cod_allowed %}checked{% endif %} required>
+                      <label class="form-check-label" for="razorpay">Razorpay (Online Payment)</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="payment_method" id="wallet" value="wallet" {% if not wallet_payment_allowed %}disabled{% endif %} required>
+                      <label class="form-check-label" for="wallet">
+                        Wallet Payment (Balance: ₹{{ wallet_balance|floatformat:2 }})
+                        {% if not wallet_payment_allowed %}
+                          <span class="text-danger" style="font-size: 12px;">(Insufficient balance)</span>
+                        {% endif %}
+                      </label>
+                    </div>
+                  </div>
+                <!-- Cart Table -->
+                <div class="cart__table">
+                  <table class="cart__table--inner">
+                    <thead class="cart__table--header">
+                      <tr class="cart__table--header__items">
+                        <th class="cart__table--header__list">Product</th>
+                        <th class="cart__table--header__list">Price</th>
+                        <th class="cart__table--header__list"></th>
+                        <th class="cart__table--header__list">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody class="cart__table--body">
+                      {% for item in cart_items %}
+                      <tr class="cart__table--body__items">
+                        <td class="cart__table--body__list">
+                          <div class="cart__product d-flex align-items-center">
+                            <a href="{% url 'remove_from_cart' item.id %}" class="cart__remove--btn" aria-label="remove button">
+                              <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16px" height="16px">
+                                <path d="M 4.7070312 3.2929688 L 3.2929688 4.7070312 L 10.585938 12 L 3.2929688 19.292969 L 4.7070312 20.707031 L 12 13.414062 L 19.292969 20.707031 L 20.707031 19.292969 L 13.414062 12 L 20.707031 4.7070312 L 19.292969 3.2929688 L 12 10.585938 L 4.7070312 3.2929688 z"/>
+                              </svg>
+                            </a>
+                            <div class="cart__thumbnail">
+                              <a href="{% url 'product_details' item.variant.product.id %}">
+                                <img class="border-radius-5" src="{{ item.variant.image_main.url }}" alt="{{ item.variant.product.name }}">
+                              </a>
+                            </div>
+                            <div class="cart__content">
+                              <h4 class="cart__content--title"><a href="{% url 'product_details' item.variant.product.id %}">{{ item.variant.product.name }}</a></h4>
+                              <span class="cart__content--variant">COLOR: {{ item.variant.color }}</span>
+                              <span class="cart__content--variant">SIZE: {{ item.size.size }}</span>
+                              {% if item.size.stock == 0 %}
+                              <span class="cart__content--variant text-danger">Out of Stock</span>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </td>
+                        <td class="cart__table--body__list">
+                          <span class="cart__price">₹{{ item.variant.product.price|floatformat:2 }}</span>
+                        </td>
+                        <td class="cart__table--body__list">
+                          <div class="quantity__box">
+                            <label>
+                            </label>
+                          </div>
+                        </td>
+                        <td class="cart__table--body__list">
+                          <span class="cart__price end">₹{{ item.get_total_price|floatformat:2 }}</span>
+                        </td>
+                      </tr>
+                      {% empty %}
+                      <tr><td colspan="4">No items in cart.</td></tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <div class="continue__shopping d-flex justify-content-between">
+                    <a class="continue__shopping--link" href="{% url 'shop' %}">Continue shopping</a>
+                    <a class="continue__shopping--clear" href="{% url 'cart' %}">Return to Cart</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <!-- Coupon Section -->
+                 {% csrf_token %}
+                <div class="coupon__section">
+                  <h3 class="section__header--title mb-15">Apply Coupon</h3>
+                  {% if applied_coupon %}
+                    <div class="coupon__applied">
+                      <div class="coupon__applied--info">
+                        <span class="coupon__applied--code">Coupon: <strong>{{ applied_coupon.code }}</strong></span>
+                        <span class="coupon__applied--discount">Discount: ₹{{ discount|floatformat:2 }}</span>
+                      </div>
+                      <button type="button" class="coupon__section--button remove" id="remove-coupon-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Remove
+                      </button>
+                    </div>
+                  {% else %}
+                    <div class="coupon__section--form">
+                      <input type="text" class="coupon__section--input" id="coupon-code" placeholder="Enter coupon code" >
+                      <button type="button" class="coupon__section--button apply" id="apply-coupon-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Apply
+                      </button>
+                    </div>
+                  {% endif %}
+                  <div class="coupon__available mt-20">
+                    <h4 class="coupon__available--title">Available Coupons</h4>
+                    {% if available_coupons %}
+                      <ul class="coupon__available--list">
+                        {% for coupon in available_coupons %}
+                          <li class="coupon__available--item">
+                            <div class="coupon__available--info">
+                              <span class="coupon__available--code" style="cursor: pointer;"><strong>{{ coupon.code }}</strong></span>
+                              <span class="coupon__available--discount">
+                                Discount: 
+                                {% if coupon.discount_type == 'percentage' %}
+                                  {{ coupon.discount_percentage|floatformat:0 }}%
+                                {% else %}
+                                  ₹{{ coupon.discount_value|floatformat:2 }}
+                                {% endif %}
+                              </span>
+                              <p class="coupon__available--desc">{{ coupon.description }}</p>
+                            </div>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      <p class="coupon__available--empty">No coupons available at the moment.</p>
+                    {% endif %}
+                  </div>
+                  <div id="coupon-message"></div>
+                </div>
+                <!-- Hidden input to pass applied coupon to placeorder -->
+                {% if applied_coupon %}
+                  <input type="hidden" name="coupon_code" value="{{ applied_coupon.code }}">
+                {% endif %}
+                <div class="cart__summary border-radius-10">
+                  <div class="cart__summary--total mb-20">
+                    <table class="cart__summary--total__table">
+                      <tbody>
+                        <tr class="cart__summary--total__list">
+                          <td class="cart__summary--total__title text-left">SUBTOTAL</td>
+                          <td class="cart__summary--amount text-right">₹{{ subtotal|floatformat:2 }}</td>
+                        </tr>
+                        <tr class="cart__summary--total__list">
+                          <td class="cart__summary--total__title text-left">SHIPPING</td>
+                          <td class="cart__summary--amount text-right">₹{{ shipping|floatformat:2 }}</td>
+                        </tr>
+                        {% if discount > 0 %}
+                        <tr class="cart__summary--total__list">
+                          <td class="cart__summary--total__title text-left">DISCOUNT</td>
+                          <td class="cart__summary--amount text-right">-₹{{ discount|floatformat:2 }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr class="cart__summary--total__list">
+                          <td class="cart__summary--total__title text-left">GRAND TOTAL</td>
+                          <td class="cart__summary--amount text-right">₹{{ final_total|floatformat:2 }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="cart__summary--footer">
+                    <p class="cart__summary--footer__desc">Shipping & taxes calculated at checkout</p>
+                    <ul class="d-flex justify-content-between">
+                      <li><button type="submit" class="cart__summary--footer__btn primary__btn checkout">Place Order</button></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+      <!-- Checkout section end -->
+    </main>
+
+    <!-- Start footer section -->
+    <footer class="footer__section bg__black">
+        <div class="container-fluid">
+            <div class="main__footer d-flex justify-content-between">
+                <div class="footer__widget footer__widget--width">
+                    <h2 class="footer__widget--title text-ofwhite h3">About Us 
+                        <button class="footer__widget--button" aria-label="footer widget button">
+                            <svg class="footer__widget--title__arrowdown--icon" xmlns="http://www.w3.org/2000/svg" width="12.355" height="8.394" viewBox="0 0 10.355 6.394">
+                                <path  d="M15.138,8.59l-3.961,3.952L7.217,8.59,6,9.807l5.178,5.178,5.178-5.178Z" transform="translate(-6 -8.59)" fill="currentColor"></path>
+                            </svg>
+                        </button>
+                    </h2>
+                    <div class="footer__widget--inner">
+                        <p class="footer__widget--desc text-ofwhite mb-20">Welcome to Manifex Clothing <br>
+                                                        Discover the latest drop of premium shirts and jeans <br> designed for comfort and crafted for style. <br>
+                                                        Redefine your wardrobe with timeless essentials made for every move. <br>
+                                                        Style. Fit. Confidence — Only at Manifex.</p>
+                        <div class="footer__social">
+                            <h3 class="social__title text-ofwhite h4 mb-15">Follow Us</h3>
+                            <ul class="social__shear d-flex">
+                                <li class="social__shear--list">
+                                    <a class="social__shear--list__icon" target="_blank" href="https://www.facebook.com/">
+                                        <svg  xmlns="http://www.w3.org/2000/svg" width="7.667" height="16.524" viewBox="0 0 7.667 16.524">
+                                            <path  data-name="Path 237" d="M967.495,353.678h-2.3v8.253h-3.437v-8.253H960.13V350.77h1.624v-1.888a4.087,4.087,0,0,1,.264-1.492,2.9,2.9,0,0,1,1.039-1.379,3.626,3.626,0,0,1,2.153-.6l2.549.019v2.833h-1.851a.732.732,0,0,0-.472.151.8.8,0,0,0-.246.642v1.719H967.8Z" transform="translate(-960.13 -345.407)" fill="currentColor"/>
+                                        </svg>
+                                        <span class="visually-hidden">Facebook</span>
+                                    </a>
+                                </li>
+                                <li class="social__shear--list">
+                                    <a class="social__shear--list__icon" target="_blank" href="https://twitter.com/">
+                                        <svg  xmlns="http://www.w3.org/2000/svg" width="16.489" height="13.384" viewBox="0 0 16.489 13.384">
+                                            <path  data-name="Path 303" d="M966.025,1144.2v.433a9.783,9.783,0,0,1-.621,3.388,10.1,10.1,0,0,1-1.845,3.087,9.153,9.153,0,0,1-3.012,2.259,9.825,9.825,0,0,1-4.122.866,9.632,9.632,0,0,1-2.748-.4,9.346,9.346,0,0,1-2.447-1.11q.4.038.809.038a6.723,6.723,0,0,0,2.24-.376,7.022,7.022,0,0,0,1.958-1.054,3.379,3.379,0,0,1-1.958-.687,3.259,3.259,0,0,1-1.186-1.666,3.364,3.364,0,0,0,.621.056,3.488,3.488,0,0,0,.885-.113,3.267,3.267,0,0,1-1.374-.631,3.356,3.356,0,0,1-.969-1.186,3.524,3.524,0,0,1-.367-1.5v-.057a3.172,3.172,0,0,0,1.544.433,3.407,3.407,0,0,1-1.1-1.214,3.308,3.308,0,0,1-.4-1.609,3.362,3.362,0,0,1,.452-1.694,9.652,9.652,0,0,0,6.964,3.538,3.911,3.911,0,0,1-.075-.772,3.293,3.293,0,0,1,.452-1.694,3.409,3.409,0,0,1,1.233-1.233,3.257,3.257,0,0,1,1.685-.461,3.351,3.351,0,0,1,2.466,1.073,6.572,6.572,0,0,0,2.146-.828,3.272,3.272,0,0,1-.574,1.083,3.477,3.477,0,0,1-.913.8,6.869,6.869,0,0,0,1.958-.546A7.074,7.074,0,0,1,966.025,1144.2Z" transform="translate(-951.23 -1140.849)" fill="currentColor"/>
+                                        </svg>
+                                        <span class="visually-hidden">Twitter</span>
+                                    </a>
+                                </li>
+                                <li class="social__shear--list">
+                                    <a class="social__shear--list__icon" target="_blank" href="https://www.instagram.com/">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16.497" height="16.492" viewBox="0 0 19.497 19.492">
+                                            <path  data-name="Icon awesome-instagram" d="M9.747,6.24a5,5,0,1,0,5,5A4.99,4.99,0,0,0,9.747,6.24Zm0,8.247A3.249,3.249,0,1,1,13,11.238a3.255,3.255,0,0,1-3.249,3.249Zm6.368-8.451A1.166,1.166,0,1,1,14.949,4.87,1.163,1.163,0,0,1,16.115,6.036Zm3.31,1.183A5.769,5.769,0,0,0,17.85,3.135,5.807,5.807,0,0,0,13.766,1.56c-1.609-.091-6.433-.091-8.042,0A5.8,5.8,0,0,0,1.64,3.13,5.788,5.788,0,0,0,.065,7.215c-.091,1.609-.091,6.433,0,8.042A5.769,5.769,0,0,0,1.64,19.341a5.814,5.814,0,0,0,4.084,1.575c1.609.091,6.433.091,8.042,0a5.769,5.769,0,0,0,4.084-1.575,5.807,5.807,0,0,0,1.575-4.084c.091-1.609.091-6.429,0-8.038Zm-2.079,9.765a3.289,3.289,0,0,1-1.853,1.853c-1.283.509-4.328.391-5.746.391S5.28,19.341,4,18.837a3.289,3.289,0,0,1-1.853-1.853c-.509-1.283-.391-4.328-.391-5.746s-.113-4.467.391-5.746A3.289,3.289,0,0,1,4,3.639c1.283-.509,4.328-.391,5.746-.391s4.467-.113,5.746.391a3.289,3.289,0,0,1,1.853,1.853c.509,1.283.391,4.328.391,5.746S17.855,15.705,17.346,16.984Z" transform="translate(0.004 -1.492)" fill="currentColor"/>
+                                        </svg>
+                                        <span class="visually-hidden">Instagram</span>
+                                    </a>
+                                </li>
+                                <li class="social__shear--list">
+                                    <a class="social__shear--list__icon" target="_blank" href="https://www.youtube.com/">
+                                        <svg  xmlns="http://www.w3.org/2000/svg" width="16.49" height="11.582" viewBox="0 0 16.49 11.582">
+                                            <path  data-name="Path 321" d="M967.759,1365.592q0,1.377-.019,1.717-.076,1.114-.151,1.622a3.981,3.981,0,0,1-.245.925,1.847,1.847,0,0,1-.453.717,2.171,2.171,0,0,1-1.151.6q-3.585.265-7.641.189-2.377-.038-3.387-.085a11.337,11.337,0,0,1-1.5-.142,2.206,2.206,0,0,1-1.113-.585,2.562,2.562,0,0,1-.528-1.037,3.523,3.523,0,0,1-.141-.585c-.032-.2-.06-.5-.085-.906a38.894,38.894,0,0,1,0-4.867l.113-.925a4.382,4.382,0,0,1,.208-.906,2.069,2.069,0,0,1,.491-.755,2.409,2.409,0,0,1,1.113-.566,19.2,19.2,0,0,1,2.292-.151q1.82-.056,3.953-.056t3.952.066q1.821.067,2.311.142a2.3,2.3,0,0,1,.726.283,1.865,1.865,0,0,1,.557.49,3.425,3.425,0,0,1,.434,1.019,5.72,5.72,0,0,1,.189,1.075q0,.095.057,1C967.752,1364.1,967.759,1364.677,967.759,1365.592Zm-7.6.925q1.49-.754,2.113-1.094l-4.434-2.339v4.66Q958.609,1367.311,960.156,1366.517Z" transform="translate(-951.269 -1359.8)" fill="currentColor"/>
+                                        </svg>
+                                        <span class="visually-hidden">Youtube</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer__widget--menu__wrapper d-flex footer__widget--width">
+                    <div class="footer__widget">
+                        <h2 class="footer__widget--title text-ofwhite h3">My Account 
+                            <button class="footer__widget--button" aria-label="footer widget button">
+                                <svg class="footer__widget--title__arrowdown--icon" xmlns="http://www.w3.org/2000/svg" width="12.355" height="8.394" viewBox="0 0 10.355 6.394">
+                                    <path  d="M15.138,8.59l-3.961,3.952L7.217,8.59,6,9.807l5.178,5.178,5.178-5.178Z" transform="translate(-6 -8.59)" fill="currentColor"></path>
+                                </svg>
+                            </button>
+                        </h2>
+                        <ul class="footer__widget--menu footer__widget--inner">
+                            <li class="footer__widget--menu__list"><a class="footer__widget--menu__text" href="{% url 'user_profile' %}">My Account</a></li>
+                            <li class="footer__widget--menu__list"><a class="footer__widget--menu__text" href="{% url 'cart' %}">Shopping Cart</a></li>
+                            <li class="footer__widget--menu__list"><a class="footer__widget--menu__text" href="{% url 'wishlist' %}">Wishlist</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__widget">
+                        <h2 class="footer__widget--title text-ofwhite h3">Categories 
+                            <button class="footer__widget--button" aria-label="footer widget button">
+                                <svg class="footer__widget--title__arrowdown--icon" xmlns="http://www.w3.org/2000/svg" width="12.355" height="8.394" viewBox="0 0 10.355 6.394">
+                                    <path  d="M15.138,8.59l-3.961,3.952L7.217,8.59,6,9.807l5.178,5.178,5.178-5.178Z" transform="translate(-6 -8.59)" fill="currentColor"></path>
+                                </svg>
+                            </button>
+                        </h2>
+                        <ul class="footer__widget--menu footer__widget--inner">
+                            <li class="footer__widget--menu__list"><a class="footer__widget--menu__text" href="{% url 'about' %}">About Us</a></li>
+                            <li class="footer__widget--menu__list"><a class="footer__widget--menu__text" href="{% url 'contact' %}">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+
+                </div>
+              
+                     
+               
+            </div>
+            <div class="footer__bottom d-flex justify-content-between align-items-center">
+                <p class="copyright__content text-ofwhite m-0">Copyright © 2022 <a class="copyright__content--link" href="">MANIFEX CLOTHING</a> . All Rights Reserved.Design By MANIFEX CLOTHING</p>
+                <div class="footer__payment text-right">
+                    <img class="display-block" src="{% static 'assets/img/other/payment-visa-card.png' %}" alt="visa-card">
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- End footer section -->
+
+    <!-- Scroll top bar -->
+    <button id="scroll__top"><svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M112 244l144-144 144 144M256 120v292"/></svg></button>
+
+    <!-- All Script JS Plugins here -->
+    <script src="{% static 'assets/js/vendor/popper.js' %}" defer="defer"></script>
+    <script src="{% static 'assets/js/vendor/bootstrap.min.js' %}" defer="defer"></script>
+    <script src="{% static 'assets/js/plugins/swiper-bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/glightbox.min.js' %}"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
+
+    <!-- JavaScript for quantity updates and coupon handling -->
+
+    {% csrf_token %}
+
+<script>
+const shippingCost = {{ shipping|floatformat:2 }};
+const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+// Display messages in coupon-message div
+function displayMessage(message, type = 'error') {
+  const messageElement = document.getElementById('coupon-message');
+  if (messageElement) {
+    messageElement.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+    setTimeout(() => { messageElement.innerHTML = ''; }, 3000);
+  } else {
+    console.warn('coupon-message div not found');
+  }
+}
+
+// Coupon handling
+function attachCouponListeners() {
+  const applyCouponBtn = document.getElementById('apply-coupon-btn');
+  const removeCouponBtn = document.getElementById('remove-coupon-btn');
+
+  function applyCoupon(couponCode) {
+    if (!couponCode) {
+      displayMessage('Please enter a coupon code.');
+      return;
+    }
+    fetch('/coupon/apply-coupon/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      },
+      body: JSON.stringify({ coupon_code: couponCode })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        displayMessage('Coupon applied successfully!', 'success');
+        setTimeout(() => window.location.reload(), 1000);
+      } else {
+        displayMessage(data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Apply coupon error:', error);
+      displayMessage('Failed to apply coupon. Please try again.');
+    });
+  }
+
+  if (applyCouponBtn) {
+    applyCouponBtn.addEventListener('click', () => {
+      const couponCode = document.getElementById('coupon-code').value.trim();
+      applyCoupon(couponCode);
+    });
+  }
+
+  if (removeCouponBtn) {
+    removeCouponBtn.addEventListener('click', () => {
+      fetch('/coupon/remove-coupon/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({})
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          displayMessage('Coupon removed successfully!', 'success');
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          displayMessage(data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Remove coupon error:', error);
+        displayMessage('Failed to remove coupon. Please try again.');
+      });
+    });
+  }
+
+  document.querySelectorAll('.coupon__available--code').forEach(codeElement => {
+    codeElement.addEventListener('click', () => {
+      const couponCode = codeElement.querySelector('strong').textContent;
+      navigator.clipboard.writeText(couponCode)
+        .then(() => {
+          displayMessage('Coupon code copied!', 'success');
+        })
+        .catch(error => {
+          console.error('Copy error:', error);
+          displayMessage('Failed to copy coupon code.');
+        });
+    });
+  });
+
+  document.querySelectorAll('.coupon__available--apply-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const couponCode = btn.getAttribute('data-coupon-code');
+      applyCoupon(couponCode);
+    }); 
+  });
+}
+
+// Form submission validation
+// Form submission validation
+// Form submission validation
+function attachFormListener() {
+  const form = document.querySelector('form[action="{% url 'placeorder' %}"]');
+  const codAllowed = {{ cod_allowed|yesno:"true,false" }};
+  const walletPaymentAllowed = {{ wallet_payment_allowed|yesno:"true,false" }};
+
+  if (form) {
+    form.addEventListener('submit', e => {
+      const address = document.querySelector('input[name="address_id"]:checked');
+      const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+      
+      if (!address) {
+        e.preventDefault();
+        displayMessage('Please select an address.');
+        return;
+      }
+      if (!paymentMethod) {
+        e.preventDefault();
+        displayMessage('Please select a payment method.');
+        return;
+      }
+      console.log('Payment Method Value:', paymentMethod.value);
+      if (!['cod', 'razorpay', 'wallet'].includes(paymentMethod.value.trim())) {
+        e.preventDefault();
+        displayMessage('Invalid payment method selected.');
+        return;
+      }
+      // Check if COD is selected but not allowed
+      if (paymentMethod.value.trim() === 'cod' && !codAllowed) {
+        e.preventDefault();
+        displayMessage('Cash on Delivery is not available for orders above ₹1000.');
+        return;
+      }
+      // Check if Wallet is selected but not allowed
+      if (paymentMethod.value.trim() === 'wallet' && !walletPaymentAllowed) {
+        e.preventDefault();
+        displayMessage('Insufficient wallet balance for this order.');
+        return;
+      }
+      // Form submits normally for valid selections
+    });
+  } else {
+    console.warn('Checkout form not found');
+  }
+}
+
+// Initialize
+attachCouponListeners();
+attachFormListener();
+</script>
+  
+    

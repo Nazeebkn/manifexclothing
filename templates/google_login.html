@@ -1,0 +1,38 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Login</title>
+    <style>
+        .btn-google {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: white;
+            color: #444;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .btn-google:hover {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" style="text-align: center; margin-top: 100px;">
+        <h2>Sign in to Your Account</h2>
+        <a href="{% provider_login_url 'google' %}" class="btn-google">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google Logo">
+            Sign in with Google
+        </a>
+    </div>
+</body>
+</html>

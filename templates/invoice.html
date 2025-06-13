@@ -1,0 +1,111 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Suruchi - Invoice</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'assets/css/vendor/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .invoice-info, .order-items {
+      margin-bottom: 20px;
+    }
+    .invoice-info p, .order-items p {
+      font-size: 1.2rem;
+      margin: 5px 0;
+    }
+    .invoice-info p strong {
+      color: #222;
+    }
+    .order-items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .order-items-table th, .order-items-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .order-items-table th {
+      font-weight: 600;
+      color: #222;
+    }
+    .order-items-table td {
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Invoice</h2>
+    {% if order %}
+      <div class="invoice-info">
+        <p><strong>Order Reference:</strong> {{ order.id }}</p>
+        <p><strong>Customer:</strong> {{ request.user.first_name|default:'Customer' }} {{ request.user.last_name }}</p>
+        <p><strong>Date:</strong> {{ order.created_at|date:"F j, Y" }}</p>
+        <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+        <p><strong>Payment Status:</strong> {{ order.payment_status }}</p>
+      </div>
+
+      <div class="order-items">
+        <h3>Order Items</h3>
+        <table class="order-items-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order_items %}
+            <tr>
+              <td>{{ item.product.name|default:"Unknown Product" }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>₹{{ item.price|floatformat:2 }}</td>
+              <td>₹{{ item.get_total_price|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4">No items found in this order.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="mt-3"><strong>Total Amount:</strong> ₹{{ order.total_price|floatformat:2 }}</p>
+      </div>
+
+      <div class="shipping-address">
+        <h3>Shipping Address</h3>
+        <p>{{ order.shipping_address.street_address|default:"N/A" }}</p>
+        <p>{{ order.shipping_address.city|default:"N/A" }}, {{ order.shipping_address.state|default:"N/A" }}, {{ order.shipping_address.country|default:"N/A" }}</p>
+        <p><strong>Postal Code:</strong> {{ order.shipping_address.postal_code|default:"N/A" }}</p>
+        <p><strong>Phone:</strong> {{ order.shipping_address.phone_number|default:"N/A" }}</p>
+      </div>
+    {% else %}
+      <p>No order details available.</p>
+    {% endif %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Offer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #329097;
+            --secondary: #e74c3c;
+            --dark: #2c3e50;
+            --light: #f5f7fa;
+            --text: #333;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --success: #27ae60;
+            --danger: #c0392b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background:linear-gradient(135deg, var(--primary), #2a7a80);
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .sidebar ul li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar ul li.active {
+            background-color: var(--secondary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content {
+            margin-left: 280px;
+            padding: 30px;
+            width: calc(100% - 280px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .header .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .header .user-profile img:hover {
+            transform: scale(1.1);
+        }
+
+        .header .search-bar input {
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            width: 250px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .header .search-bar input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(50, 144, 151, 0.2);
+            outline: none;
+        }
+
+        .offer-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .offer-section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .offer-section h2::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -5px;
+            left: 0;
+        }
+
+        .message-container {
+            margin-bottom: 20px;
+        }
+
+        .error {
+            color: var(--danger);
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        .success {
+            color: var(--success);
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .offer-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .account__login--input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: #fafafa;
+            transition: var(--transition);
+        }
+
+        .account__login--input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(50, 144, 151, 0.2);
+            background-color: white;
+            outline: none;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-check-input {
+            margin-right: 0.75rem;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .form-check-label {
+            font-size: 0.95rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-start;
+            margin-top: 2rem;
+        }
+
+        .account__login--btn {
+            background: linear-gradient(90deg, var(--primary), #2a7a80);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .account__login--btn:hover {
+            background: linear-gradient(90deg, #2a7a80, var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(50, 144, 151, 0.3);
+        }
+
+        .cancel-btn {
+            background: #95a5a6;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 500;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cancel-btn:hover {
+            background: #7f8c8d;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
+        }
+
+        .field-error {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .field-error::before {
+            content: '⚠️';
+            margin-right: 5px;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            .offer-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <h3>MANIFEX CLOTHING</h3>
+        </div>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="{% url 'user_management' %}"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="{% url 'product_list' %}"><i class="fas fa-box"></i> Products</a></li>
+            <li><a href="{% url 'category_list' %}"><i class="fas fa-tags"></i> Category</a></li>
+            <li><a href="{% url 'order_management' %}"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+            <li><a href="{% url 'coupon' %}"><i class="fas fa-ticket-alt"></i> Coupons</a></li>
+            <li class="active"><a href="{% url 'offer_list' %}"><i class="fas fa-percentage"></i> Offers</a></li>
+            <li><a href="{% url 'sales_report' %}"><i class="fas fa-chart-line"></i> Sales Report</a></li>
+            <li><a href="{% url 'wallet_management' %}"><i class="fas fa-wallet"></i> Wallet Management</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <div class="header">
+                
+        </div>
+        <div class="offer-section">
+            <h2>Add New Offer</h2>
+            {% if messages %}
+            <div class="message-container">
+                {% for message in messages %}
+                <p class="{% if message.tags == 'success' %}success{% else %}error{% endif %}">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <form method="POST" class="offer-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="offer_type"><i class="fas fa-list"></i> Offer Type</label>
+                    <select name="offer_type" id="offer_type" class="account__login--input" onchange="toggleFields()">
+                        <option value="">Select Offer Type</option>
+                        <option value="product" {% if data.offer_type == 'product' %}selected{% endif %}>Product Offer</option>
+                        <option value="category" {% if data.offer_type == 'category' %}selected{% endif %}>Category Offer</option>
+                    </select>
+                    {% if errors.offer_type %}
+                    <div class="field-error">{{ errors.offer_type }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group" id="product_field">
+                    <label for="product"><i class="fas fa-box"></i> Product</label>
+                    <select name="product" id="product" class="account__login--input">
+                        <option value="">Select Product</option>
+                        {% for product in products %}
+                        <option value="{{ product.id }}" {% if data.product == product.id|stringformat:"s" %}selected{% endif %}>{{ product.name }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if errors.product %}
+                    <div class="field-error">{{ errors.product }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group" id="category_field" style="display: none;">
+                    <label for="category"><i class="fas fa-tags"></i> Category</label>
+                    <select name="category" id="category" class="account__login--input">
+                        <option value="">Select Category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if data.category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if errors.category %}
+                    <div class="field-error">{{ errors.category }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="discount_percentage"><i class="fas fa-percent"></i> Discount Percentage (%)</label>
+                    <input type="number" step="0.01" name="discount_percentage" id="discount_percentage" class="account__login--input" value="{{ data.discount_percentage|default:'0' }}" required>
+                    {% if errors.discount_percentage %}
+                    <div class="field-error">{{ errors.discount_percentage }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="valid_from"><i class="fas fa-calendar-alt"></i> Valid From</label>
+                    <input type="datetime-local" name="valid_from" id="valid_from" class="account__login--input" value="{{ default_valid_from|date:'Y-m-d\\TH:i' }}" required>
+                    {% if errors.valid_from %}
+                    <div class="field-error">{{ errors.valid_from }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="valid_until"><i class="fas fa-calendar-alt"></i> Valid Until</label>
+                    <input type="datetime-local" name="valid_until" id="valid_until" class="account__login--input" value="{{ default_valid_until|date:'Y-m-d\\TH:i' }}" required>
+                    {% if errors.valid_until %}
+                    <div class="field-error">{{ errors.valid_until }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" name="is_active" id="is_active" class="form-check-input" {% if data.is_active %}checked{% endif %}>
+                    <label for="is_active" class="form-check-label"><i class="fas fa-toggle-on"></i> Is Active</label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="account__login--btn"><i class="fas fa-plus"></i> Add Offer</button>
+                    <a href="{% url 'offer_list' %}" class="cancel-btn"><i class="fas fa-times"></i> Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function toggleFields() {
+            const offerType = document.getElementById('offer_type').value;
+            const productField = document.getElementById('product_field');
+            const categoryField = document.getElementById('category_field');
+            if (offerType === 'product') {
+                productField.style.display = 'block';
+                categoryField.style.display = 'none';
+                document.getElementById('product').required = true;
+                document.getElementById('category').required = false;
+            } else if (offerType === 'category') {
+                productField.style.display = 'none';
+                categoryField.style.display = 'block';
+                document.getElementById('product').required = false;
+                document.getElementById('category').required = true;
+            } else {
+                productField.style.display = 'none';
+                categoryField.style.display = 'none';
+                document.getElementById('product').required = false;
+                document.getElementById('category').required = false;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', toggleFields);
+    </script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variant List - {{ product.name }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #329097;
+            --secondary: #e74c3c;
+            --dark: #2c3e50;
+            --light: #f5f7fa;
+            --text: #333;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --success: #27ae60;
+            --danger: #c0392b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--primary), #2a7a80);
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar .logo img {
+            width: 120px;
+            border-radius: 8px;
+        }
+
+        .sidebar h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .sidebar ul li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar ul li.active {
+            background-color: var(--secondary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content {
+            margin-left: 280px;
+            padding: 30px;
+            width: calc(100% - 280px);
+        }
+
+        .variant-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .variant-section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .variant-section h2::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -5px;
+            left: 0;
+        }
+
+        .variant-section h3 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--dark);
+            margin: 20px 0 15px;
+        }
+
+        .variant-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .variant-list li {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            background-color: #fafafa;
+            transition: var(--transition);
+        }
+
+        .variant-list li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .variant-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .variant-header strong {
+            font-size: 1.2rem;
+            color: var(--dark);
+        }
+
+        .variant-images {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .variant-images img {
+            max-height: 100px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            transition: var(--transition);
+        }
+
+        .variant-images img:hover {
+            transform: scale(1.05);
+        }
+
+        .variant-sizes {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .variant-sizes strong {
+            color: var(--dark);
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(90deg, var(--primary), #2a7a80);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(90deg, #2a7a80, var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(50, 144, 151, 0.3);
+        }
+
+        .add-product-btn {
+            background: linear-gradient(90deg, var(--primary), #2a7a80);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 500;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 15px;
+        }
+
+        .add-product-btn:hover {
+            background: linear-gradient(90deg, #2a7a80, var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(50, 144, 151, 0.3);
+        }
+
+        .variant-form {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .variant-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .variant-form select, .variant-form input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: white;
+            transition: var(--transition);
+        }
+
+        .variant-form select:focus, .variant-form input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(50, 144, 151, 0.2);
+            outline: none;
+        }
+
+        .variant-form button {
+            background: linear-gradient(90deg, var(--primary), #2a7a80);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .variant-form button:hover {
+            background: linear-gradient(90deg, #2a7a80, var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(50, 144, 151, 0.3);
+        }
+
+        .success {
+            color: var(--success);
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .error {
+            color: var(--danger);
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        .no-variants {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1rem;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            .variant-section {
+                padding: 20px;
+            }
+            .variant-images {
+                flex-wrap: wrap;
+            }
+            .variant-form {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <h2>MANIFEX CLOTHING</h2>
+        </div>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="{% url 'user_management' %}"><i class="fas fa-users"></i> Users</a></li>
+            <li class="active"><a href="{% url 'product_list' %}"><i class="fas fa-box"></i> Products</a></li>
+            <li><a href="{% url 'category_list' %}"><i class="fas fa-tags"></i> Category</a></li>
+            <li><a href="{% url 'order_management' %}"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+            <li><a href="{% url 'coupon' %}"><i class="fas fa-ticket-alt"></i> Coupons</a></li>
+            <li><a href="{% url 'offer_list' %}"><i class="fas fa-percentage"></i> Offers</a></li>
+            <li><a href="{% url 'sales_report' %}"><i class="fas fa-chart-line"></i> Sales Report</a></li>
+            <li><a href="{% url 'wallet_management' %}"><i class="fas fa-wallet"></i> Wallet Management</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="variant-section">
+            <h2>Variant List for {{ product.name }}</h2>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="{% if message.tags == 'success' %}success{% else %}error{% endif %}"><i class="{% if message.tags == 'success' %}fas fa-check-circle{% else %}fas fa-exclamation-circle{% endif %}"></i> {{ message }}</p>
+                {% endfor %}
+            {% endif %}
+
+            <h3>Variants</h3>
+            {% if variants %}
+                <ul class="variant-list">
+                    {% for variant in variants %}
+                        <li>
+                            <div class="variant-header">
+                                <div>
+                                    <strong>{{ variant.color }}</strong>
+                                    <span style="margin-left: 10px;">Price: ₹{{ variant.product.price }}</span>
+                                </div>
+                                <a href="{% url 'add_size' variant.id %}" class="action-btn"><i class="fas fa-plus"></i> Add Size</a>
+                            </div>
+                            <div class="variant-images">
+                                {% if variant.image_main %}
+                                    <img src="{{ variant.image_main.url }}" alt="{{ variant.color }} Main Image">
+                                {% endif %}
+                                {% if variant.image_1 %}
+                                    <img src="{{ variant.image_1.url }}" alt="{{ variant.color }} Image 1">
+                                {% endif %}
+                                {% if variant.image_2 %}
+                                    <img src="{{ variant.image_2.url }}" alt="{{ variant.color }} Image 2">
+                                {% endif %}
+                                {% if variant.image_3 %}
+                                    <img src="{{ variant.image_3.url }}" alt="{{ variant.color }} Image 3">
+                                {% endif %}
+                            </div>
+                            <p class="variant-sizes">
+                                <strong>Sizes:</strong>
+                                {% for size in variant.sizes.all %}
+                                    {{ size.size }} (Stock: {{ size.stock }}){% if not forloop.last %}, {% endif %}
+                                {% empty %}
+                                    No sizes available.
+                                {% endfor %}
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-variants">No variants available for this product.</p>
+            {% endif %}
+
+            
+
+           
+        </div>
+    </div>
+</body>
+</html>

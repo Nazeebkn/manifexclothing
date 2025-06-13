@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Sales Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #329097;
+            --secondary: #e74c3c;
+            --dark: #2c3e50;
+            --light: #f5f7fa;
+            --text: #333;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --success: #27ae60;
+            --danger: #c0392b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--primary), #2a7a80);
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .sidebar ul li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar ul li.active {
+            background-color: var(--secondary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content {
+            margin-left: 280px;
+            padding: 30px;
+            width: calc(100% - 280px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .header .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .header .user-profile img:hover {
+            transform: scale(1.05);
+        }
+
+        .header .search-bar input {
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            width: 280px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .header .search-bar input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+            outline: none;
+        }
+
+        .report-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .report-section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .report-section h2::after {
+            content: '';
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+        }
+
+        .report-filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 25px;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .report-filter-form label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+
+        .report-filter-form input[type="radio"] {
+            accent-color: var(--secondary);
+            margin-right: 5px;
+        }
+
+        .report-filter-form .date-inputs {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .report-filter-form .date-input input {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .report-filter-form .date-input input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 5px rgba(231, 76, 60, 0.2);
+            outline: none;
+        }
+
+        .report-filter-form button {
+            background: linear-gradient(90deg, var(--primary), #2a7a80);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .report-filter-form button:hover {
+            background: linear-gradient(90deg, #2a7a80, var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(50, 144, 151, 0.2);
+        }
+
+        .summary-box {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-box h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .summary-box p {
+            font-size: 1rem;
+            color: #555;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .report-table table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 15px;
+        }
+
+        .report-table th, .report-table td {
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .report-table th {
+            background-color: var(--light);
+            font-weight: 600;
+            color: var(--dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .report-table tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .report-table tr:hover {
+            background-color: rgba(50, 144, 151, 0.05);
+            transition: var(--transition);
+        }
+
+        .no-sales-message {
+            font-size: 1rem;
+            color: var(--danger);
+            background-color: rgba(231, 76, 60, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .download-buttons a {
+            background: linear-gradient(45deg, var(--primary), #2a7a80);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .download-buttons a:hover {
+            background: linear-gradient(45deg, #2a7a80, var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(50, 144, 151, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .content {
+                margin-left: 0;
+                width: 100%;
+                padding: 15px;
+            }
+            .report-section {
+                padding: 20px;
+            }
+            .report-filter-form {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .report-filter-form .date-inputs {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .report-table {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <h3>MANIFEX CLOTHING</h3>
+        </div>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="{% url 'user_management' %}"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="{% url 'product_list' %}"><i class="fas fa-box"></i> Products</a></li>
+            <li><a href="{% url 'category_list' %}"><i class="fas fa-tags"></i> Category</a></li>
+            <li><a href="{% url 'order_management' %}"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+            <li><a href="{% url 'coupon' %}"><i class="fas fa-ticket-alt"></i> Coupons</a></li>
+            <li><a href="{% url 'offer_list' %}"><i class="fas fa-percentage"></i> Offers</a></li>
+            <li class="active"><a href="{% url 'sales_report' %}"><i class="fas fa-chart-line"></i> Sales Report</a></li>
+            <li><a href="{% url 'wallet_management' %}"><i class="fas fa-wallet"></i> Wallet Management</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <!-- Add user profile or search bar content if needed -->
+        </div>
+
+        <div class="report-section">
+            <h2>Sales Report - {{ period_label }}</h2>
+            <form class="report-filter-form" method="GET" action="{% url 'sales_report' %}">
+                <div>
+                    <label><input type="radio" name="filter_type" value="daily" {% if filter_type == 'daily' %}checked{% endif %}><i class="fas fa-calendar-day"></i> Daily</label>
+                    <label><input type="radio" name="filter_type" value="weekly" {% if filter_type == 'weekly' %}checked{% endif %}><i class="fas fa-calendar-week"></i> Weekly</label>
+                    <label><input type="radio" name="filter_type" value="yearly" {% if filter_type == 'yearly' %}checked{% endif %}><i class="fas fa-calendar-alt"></i> Yearly</label>
+                    <label><input type="radio" name="filter_type" value="custom" {% if filter_type == 'custom' %}checked{% endif %}><i class="fas fa-filter"></i> Custom</label>
+                </div>
+                <div class="date-inputs" id="dateInputs" {% if filter_type != 'custom' %}style="display:none;"{% endif %}>
+                    <div class="date-input">
+                        <label><i class="fas fa-calendar-start"></i> Start Date: <input type="date" name="start_date" value="{{ start_date|date:'Y-m-d' }}" required></label>
+                    </div>
+                    <div class="date-input">
+                        <label><i class="fas fa-calendar-end"></i> End Date: <input type="date" name="end_date" value="{{ end_date|date:'Y-m-d' }}" required></label>
+                    </div>
+                </div>
+                <button type="submit"><i class="fas fa-filter"></i> Apply Filter</button>
+            </form>
+
+            {% if no_sales_message %}
+                <div class="no-sales-message">
+                    <i class="fas fa-exclamation-circle"></i> {{ no_sales_message }}
+                </div>
+            {% endif %}
+
+            <div class="summary-box">
+                <h3>Summary</h3>
+                <p><i class="fas fa-shopping-cart"></i> Total Orders: {{ total_orders }}</p>
+                <p><i class="fas fa-rupee-sign"></i> Total Amount: ₹{{ total_amount|floatformat:2 }}</p>
+                <p><i class="fas fa-percentage"></i> Total Discount: ₹{{ total_discount|floatformat:2 }}</p>
+            </div>
+
+            {% if orders %}
+            <div class="summary-box">
+                <h3>Order Details</h3>
+                <div class="report-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Total Amount</th>
+                                <th>Discount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>{{ order.id }}</td>
+                                <td>{{ order.user.username }}</td>
+                                <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>₹{{ order.total_price|floatformat:2 }}</td>
+                                <td>₹{{ order.discount_coupon_amount|floatformat:2 }}</td>
+                                <td>{{ order.get_status_display }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if coupon_usage %}
+            <div class="summary-box">
+                <h3>Coupon Usage</h3>
+                <div class="report-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Coupon Code</th>
+                                <th>Times Used</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for coupon in coupon_usage %}
+                            <tr>
+                                <td>{{ coupon.coupon__code }}</td>
+                                <td>{{ coupon.count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="download-buttons">
+                <a href="?filter_type={{ filter_type }}&start_date={{ start_date|date:'Y-m-d' }}&end_date={{ end_date|date:'Y-m-d' }}&download=pdf"><i class="fas fa-file-pdf"></i> Download PDF</a>
+                <a href="?filter_type={{ filter_type }}&start_date={{ start_date|date:'Y-m-d' }}&end_date={{ end_date|date:'Y-m-d' }}&download=excel"><i class="fas fa-file-excel"></i> Download Excel</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInputs = document.getElementById('dateInputs');
+            if (!dateInputs) {
+                console.error("Element with ID 'dateInputs' not found.");
+                return;
+            }
+
+            const filterRadios = document.querySelectorAll('input[name="filter_type"]');
+            if (filterRadios.length === 0) {
+                console.error("No radio buttons with name 'filter_type' found.");
+                return;
+            }
+
+            const form = document.querySelector('.report-filter-form');
+            const dateInputFields = dateInputs.querySelectorAll('input');
+
+            const updateDateInputs = (selectedValue) => {
+                const isCustom = selectedValue === 'custom';
+                dateInputs.style.display = isCustom ? 'flex' : 'none';
+                dateInputFields.forEach(input => {
+                    input.disabled = !isCustom;
+                    if (!isCustom) {
+                        input.value = '';
+                    }
+                });
+            };
+
+            filterRadios.forEach(radio => {
+                radio.addEventListener('change', (event) => {
+                    updateDateInputs(event.target.value);
+                });
+            });
+
+            const selectedFilter = document.querySelector('input[name="filter_type"]:checked');
+            if (selectedFilter) {
+                updateDateInputs(selectedFilter.value);
+            } else {
+                updateDateInputs('');
+            }
+
+            if (form) {
+                form.addEventListener('submit', (event) => {
+                    const selectedValue = document.querySelector('input[name="filter_type"]:checked')?.value;
+                    if (selectedValue === 'custom') {
+                        const startDate = dateInputs.querySelector('input[name="start_date"]').value;
+                        const endDate = dateInputs.querySelector('input[name="end_date"]').value;
+                        if (!startDate || !endDate) {
+                            event.preventDefault();
+                            alert('Please select both start and end dates for the custom filter.');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

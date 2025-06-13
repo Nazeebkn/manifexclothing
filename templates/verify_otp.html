@@ -1,0 +1,159 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .login__section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+        .account__login {
+            background: #fff;
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .account__login--header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .account__login--input {
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            width: 100%;
+            font-size: 1rem;
+        }
+        .account__login--btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .account__login--btn:hover {
+            background-color: #218838;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+        input.error + .error-message {
+            display: block;
+        }
+        .messages .success {
+            color: #28a745;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .messages .error {
+            color: #dc3545;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .back-to-login {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .back-to-login a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back-to-login a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 767px) {
+            .brand-section {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login__section">
+        <div class="account__login">
+            <div class="account__login--header">
+                <h1>Verify OTP</h1>
+            </div>
+            <p>Enter the 4-digit OTP sent to your email.</p>
+            
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p class="{% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <form id="verify-otp-form" method="post" action="{% url 'password_otp'%}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="otp">OTP</label>
+                    <input 
+                        type="text" 
+                        id="otp"  
+                        name="otp" 
+                        class="account__login--input" 
+                        placeholder="Enter 4-digit OTP" 
+                        maxlength="4" 
+                        required
+                    >
+                    <span class="error-message">Please enter a valid 4-digit OTP</span>
+                </div>
+                <button type="submit" class="account__login--btn">Verify OTP</button>
+            </form>
+            
+            <div class="back-to-login">
+                <a href="{% url 'forgot_password' %}">Resend OTP</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('verify-otp-form');
+        const otpInput = document.getElementById('otp');
+        
+        form.addEventListener('submit', function(e) {
+            const otp = otpInput.value.trim();
+            if (!/^\d{4}$/.test(otp)) {
+                e.preventDefault();
+                otpInput.classList.add('error');
+            } else {
+                otpInput.classList.remove('error');
+            }
+        });
+
+        otpInput.addEventListener('input', function() {
+            if (this.classList.contains('error')) {
+                this.classList.remove('error');
+            }
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 4) {
+                this.value = this.value.slice(0, 4);
+            }
+        });
+    </script>
+</body>
+</html>

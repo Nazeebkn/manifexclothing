@@ -1,0 +1,112 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Suruchi - Return Product</title>
+  <meta name="description" content="Return Product Page">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'assets/css/vendor/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+  <style>
+    body {
+      font-family: 'Jost', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .return-form {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 30px;
+    }
+    .return-form h3 {
+      font-size: 2.2rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+      color: #222;
+      text-align: center;
+    }
+    .return-form textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+      resize: vertical;
+    }
+    .return-form .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      font-size: 1.5rem;
+      font-weight: 500;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.3s;
+      background: #f39c12;
+      color: #fff;
+      border: none;
+      text-align: center;
+    }
+    .return-form .btn:hover {
+      background: #e67e22;
+    }
+    .return-form .btn-back {
+      background: #6c757d;
+      margin-top: 10px;
+    }
+    .return-form .btn-back:hover {
+      background: #5a6268;
+    }
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      .return-form h3 {
+        font-size: 1.8rem;
+      }
+      .return-form textarea {
+        font-size: 1.2rem;
+      }
+      .return-form .btn {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="main__content_wrapper">
+    <section class="return-section">
+      <div class="container">
+        <div class="return-form">
+          <!-- Dynamically set the heading and button text based on the item's status -->
+          {% if request.GET.status == 'delivered' %}
+            <h3>Request Return</h3>
+          {% else %}
+            <h3>Confirm Return</h3>
+          {% endif %}
+          <form method="POST" action="{% url 'return_product' item_id %}">
+            {% csrf_token %}
+            <textarea name="return_reason" placeholder="Please provide the reason for returning this product" required></textarea>
+            {% if request.GET.status == 'delivered' %}
+              <button type="submit" class="btn">Submit Return Request</button>
+            {% else %}
+              <button type="submit" class="btn">Confirm Return</button>
+            {% endif %}
+            <a href="{% url 'order_details' order_id %}" class="btn btn-back">Back to Order Details</a>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

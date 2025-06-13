@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2>Manage Variants for {{ product.name }}</h2>
+    <a href="{% url 'product_list' %}" class="btn btn-secondary">Back to Product List</a>
+    <hr>
+
+    <!-- Add New Variant Form -->
+    <h3>Add New Variant</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ variant_form.as_p }}
+        <input type="hidden" name="add_variant" value="1">
+        <button type="submit" class="btn btn-primary">Add Variant</button>
+    </form>
+
+    <!-- Add Size to Variant Form -->
+    {% if variants %}
+        <h3>Add Size to Variant</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="variant_id">Select Variant:</label>
+            <select name="variant_id" id="variant_id">
+                {% for variant in variants %}
+                    <option value="{{ variant.id }}">{{ variant.color }} - ₹{{ variant.price }}</option>
+                {% endfor %}
+            </select>
+            {{ size_form.as_p }}
+            <input type="hidden" name="add_size" value="1">
+            <button type="submit" class="btn btn-primary">Add Size</button>
+        </form>
+    {% endif %}
+
+    <!-- Existing Variants Table -->
+    <h3>Existing Variants</h3>
+    {% if variants %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Color</th>
+                    <th>Price</th>
+                    <th>Sizes</th>
+                    <th>Images</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for variant in variants %}
+                <tr>
+                    <td>{{ variant.color }}</td>
+                    <td>₹{{ variant.price }}</td>
+                    <td>
+                        {% for size in variant.sizes.all %}
+                            {{ size.size }} (Stock: {{ size.stock }})
+                            {% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            No sizes available
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if variant.image_main %}
+                            <img src="{{ variant.image_main.url }}" alt="{{ variant.color }} Main Image" style="max-width: 50px;">
+                        {% else %}
+                            No Image
+                        {% endif %}
+                        {% if variant.image_1 %}
+                            <img src="{{ variant.image_1.url }}" alt="{{ variant.color }} Image 1" style="max-width: 50px;">
+                        {% endif %}
+                        {% if variant.image_2 %}
+                            <img src="{{ variant.image_2.url }}" alt="{{ variant.color }} Image 2" style="max-width: 50px;">
+                        {% endif %}
+                        {% if variant.image_3 %}
+                            <img src="{{ variant.image_3.url }}" alt="{{ variant.color }} Image 3" style="max-width: 50px;">
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'edit_variant' product_id=product.id variant_id=variant.id %}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{% url 'delete_variant' product_id=product.id variant_id=variant.id %}" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No variants available for this product.</p>
+    {% endif %}
+</div>
+{% endblock %}

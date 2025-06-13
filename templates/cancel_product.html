@@ -1,0 +1,103 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Suruchi - Cancel Product</title>
+  <meta name="description" content="Cancel Product Page">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'assets/css/vendor/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+  <style>
+    body {
+      font-family: 'Jost', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .cancel-form {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 30px;
+    }
+    .cancel-form h3 {
+      font-size: 2.2rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+      color: #222;
+      text-align: center;
+    }
+    .cancel-form textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+      resize: vertical;
+    }
+    .cancel-form .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      font-size: 1.5rem;
+      font-weight: 500;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.3s;
+      background: #f39c12;
+      color: #fff;
+      border: none;
+      text-align: center;
+    }
+    .cancel-form .btn:hover {
+      background: #e67e22;
+    }
+    .cancel-form .btn-back {
+      background: #6c757d;
+      margin-top: 10px;
+    }
+    .cancel-form .btn-back:hover {
+      background: #5a6268;
+    }
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      .cancel-form h3 {
+        font-size: 1.8rem;
+      }
+      .cancel-form textarea {
+        font-size: 1.2rem;
+      }
+      .cancel-form .btn {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="main__content_wrapper">
+    <section class="cancel-section">
+      <div class="container">
+        <div class="cancel-form">
+          <h3>Cancel Product</h3>
+          <form method="POST" action="{% url 'cancel_product' item_id %}">
+            {% csrf_token %}
+            <textarea name="cancel_reason" placeholder="Please provide the reason for cancellation" required></textarea>
+            <button type="submit" class="btn">Submit Cancellation</button>
+            <a href="{% url 'order_details' order_id %}" class="btn btn-back">Back to Order Details</a>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

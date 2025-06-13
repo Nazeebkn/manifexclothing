@@ -1,0 +1,396 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Suruchi - My Orders</title>
+  <meta name="description" content="My Orders Page">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/swiper-bundle.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/glightbox.min.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'assets/css/vendor/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+  <style>
+    body {
+      font-family: 'Jost', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .my__account--section__inner {
+      display: flex;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 40px;
+    }
+    .account__left--sidebar {
+      width: 250px;
+      border-right: 1px solid #eee;
+      padding-right: 20px;
+      margin-right: 20px;
+    }
+    .sidebar__user--info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .sidebar__user--photo {
+      width: 50px;
+      height: 50px;
+      background-color: #ddd;
+      border-radius: 50%;
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #666;
+      overflow: hidden;
+    }
+    .sidebar__user--photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .sidebar__user--name {
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: #333;
+    }
+    .account__content--title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 20px;
+    }
+    .account__menu {
+      list-style: none;
+      padding: 0;
+    }
+    .account__menu--list {
+      margin-bottom: 10px;
+    }
+    .account__menu--list a {
+      font-size: 1.4rem;
+      color: #555;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .account__menu--list a:hover {
+      color: #000;
+    }
+    .account__menu--list.active a {
+      color: #000;
+      font-weight: 600;
+    }
+    .account__wrapper {
+      flex: 1;
+    }
+    .account__content--title {
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .orders__modern {
+      background-color: #fff;
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .orders-table th, .orders-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      font-size: 1.4rem;
+    }
+    .orders-table th {
+      font-weight: 600;
+      color: #333;
+      background-color: #f9f9f9;
+    }
+    .orders-table td {
+      color: #666;
+    }
+    .action-btn {
+      display: inline-block;
+      padding: 8px 15px;
+      font-size: 1.3rem;
+      font-weight: 500;
+      border-radius: 5px;
+      text-decoration: none;
+      background: #007bff;
+      color: #fff;
+      transition: background 0.3s;
+    }
+    .action-btn:hover {
+      background: #0056b3;
+    }
+    .no-orders {
+      font-size: 1.5rem;
+      color: #666;
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+    /* Pagination Styles */
+    .pagination__wrapper {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .pagination__list {
+      display: inline-flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .pagination__item {
+      border: 1px solid #ddd;
+      border-right: none;
+    }
+    .pagination__item:last-child {
+      border-right: 1px solid #ddd;
+    }
+    .pagination__link {
+      display: block;
+      padding: 8px 12px;
+      font-size: 1.4rem;
+      color: #666;
+      text-decoration: none;
+      background-color: #fff;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .pagination__link:hover {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    .pagination__item.active .pagination__link {
+      background-color: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+    .pagination__item.disabled .pagination__link {
+      color: #ccc;
+      cursor: not-allowed;
+      background-color: #f9f9f9;
+    }
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      .my__account--section__inner {
+        flex-direction: column;
+        padding: 20px;
+      }
+      .account__left--sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+        padding-right: 0;
+        margin-right: 0;
+        margin-bottom: 20px;
+      }
+      .account__content--title {
+        font-size: 2rem;
+      }
+      .orders-table th, .orders-table td {
+        font-size: 1.2rem;
+        padding: 8px;
+      }
+      .action-btn {
+        font-size: 1.2rem;
+        padding: 6px 12px;
+      }
+      .sidebar__user--info {
+        justify-content: center;
+      }
+      .sidebar__user--photo {
+        width: 40px;
+        height: 40px;
+      }
+      .sidebar__user--name {
+        font-size: 1.4rem;
+      }
+      .pagination__link {
+        padding: 6px 10px;
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Start preloader -->
+  <div id="preloader">
+    <div id="ctn-preloader" class="ctn-preloader">
+      <div class="animation-preloader">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </div>
+  <!-- End preloader -->
+
+  <main class="main__content_wrapper">
+    <!-- Start breadcrumb section -->
+    <section class="breadcrumb__section breadcrumb__bg">
+      <div class="container">
+        <div class="row row-cols-1">
+          <div class="col">
+            <div class="breadcrumb__content text-center">
+              <h1 class="breadcrumb__content--title text-white mb-25">My Orders</h1>
+              <ul class="breadcrumb__content--menu d-flex justify-content-center">
+                <li class="breadcrumb__content--menu__items"><a class="text-white" href="{% url 'index' %}">Home</a></li>
+                <li class="breadcrumb__content--menu__items"><a class="text-white" href="{% url 'my_profile' %}">My Profile</a></li>
+                <li class="breadcrumb__content--menu__items"><span class="text-white">My Orders</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End breadcrumb section -->
+
+    <!-- Start orders section -->
+    <section class="my__account--section section--padding">
+      <div class="container">
+        <div class="my__account--section__inner border-radius-10 d-flex">
+          <div class="account__left--sidebar">
+            <div class="sidebar__user--info">
+              <span class="sidebar__user--name">
+                {% if user.is_authenticated %}
+                  {{ user.username }}
+                {% else %}
+                  Guest
+                {% endif %}
+              </span>
+            </div>
+            <h2 class="account__content--title h3 mb-20">My Profile</h2>
+            <ul class="account__menu">
+              <li class="account__menu--list"><a href="{% url 'my_profile' %}">My Profile</a></li>
+              <li class="account__menu--list"><a href="{% url 'address' %}">Addresses</a></li>
+              <li class="account__menu--list active"><a href="{% url 'my_orders' %}">My Orders</a></li>
+              <li class="account__menu--list"><a href="{% url 'wallet' %}">Wallet</a></li>
+              <li class="account__menu--list"><a href="{% url 'available_coupons' %}">Coupons</a></li>
+              <li class="account__menu--list"><a href="{% url 'referrals' %}">Refferals</a></li>
+              <li class="account__menu--list"><a href="login.html">Log Out</a></li>
+            </ul>
+          </div>
+          <div class="account__wrapper">
+            <h3 class="account__content--title mb-20">My Orders</h3>
+            {% if orders %}
+              <div class="orders__modern">
+                <table class="orders-table">
+                  <thead>
+                    <tr>
+                      <th>Order ID</th>
+                      <th>Product</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th>Payment Type</th>
+                      <th>Date</th>
+                      <th>Action</th>
+                      <th>Invoice</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for order in orders %}
+                      {% for item in order.items.all %}
+                        <tr>
+                          <td>{{ order.id }}</td>
+                          <td>{{ item.size.variant.product.name|default:"Unknown Product" }}</td>
+                          <td>₹{{ order.total_price|floatformat:2 }}</td>
+                          <td>{{ item.status|title }}</td>
+                          <td>{{ order.payment_method }}</td>
+                          <td>{{ order.created_at|date:"F j, Y" }}</td>
+                          <td>
+                            <a href="{% url 'order_details' order.id %}" class="action-btn">View Details</a>
+                          </td>
+                          <td>
+                            {% if order.status == 'completed' %}
+                              <a href="{% url 'generate_invoice' order.id %}" class="action-btn">Invoice</a>
+                            {% endif %}
+                          </td>
+                        </tr>
+                      {% empty %}
+                        <tr>
+                          <td colspan="8">No items in this order.</td>
+                        </tr>
+                      {% endfor %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- Pagination Controls -->
+              <div class="pagination__wrapper">
+                <ul class="pagination__list">
+                  <!-- Previous Page Link -->
+                  {% if page_obj.has_previous %}
+                    <li class="pagination__item">
+                      <a class="pagination__link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                  {% else %}
+                    <li class="pagination__item disabled">
+                      <span class="pagination__link">Previous</span>
+                    </li>
+                  {% endif %}
+
+                  <!-- Page Numbers -->
+                  {% for num in page_obj.paginator.page_range %}
+                    <li class="pagination__item {% if page_obj.number == num %}active{% endif %}">
+                      <a class="pagination__link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                  {% endfor %}
+
+                  <!-- Next Page Link -->
+                  {% if page_obj.has_next %}
+                    <li class="pagination__item">
+                      <a class="pagination__link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                  {% else %}
+                    <li class="pagination__item disabled">
+                      <span class="pagination__link">Next</span>
+                    </li>
+                  {% endif %}
+                </ul>
+              </div>
+            {% else %}
+              <p class="no-orders">You have no orders yet.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End orders section -->
+  </main>
+
+  <!-- Scroll top bar -->
+  <button id="scroll__top"><svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M112 244l144-144 144 144M256 120v292"/></svg></button>
+
+  <!-- Scripts -->
+  <script src="{% static 'assets/js/vendor/popper.js' %}" defer="defer"></script>
+  <script src="{% static 'assets/js/vendor/bootstrap.min.js' %}" defer="defer"></script>
+  <script src="{% static 'assets/js/plugins/swiper-bundle.min.js' %}" defer></script>
+  <script src="{% static 'assets/js/plugins/glightbox.min.js' %}" defer></script>
+  <script src="{% static 'assets/js/script.js' %}" defer></script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Variant - {{ product.name }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100%;
+        }
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar .logo img {
+            width: 100px;
+        }
+        .sidebar h3 {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 0;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 15px 20px;
+            cursor: pointer;
+        }
+        .sidebar ul li:hover {
+            background-color: #34495e;
+        }
+        .sidebar ul li.active {
+            background-color: #e74c3c;
+        }
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .header .user-profile img {
+            width: 30px;
+            border-radius: 50%;
+        }
+        .header .search-bar input {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .variant-section {
+            background-color: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .variant-section h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="file"] {
+            padding: 0.5rem;
+        }
+        .account__login--btn {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .account__login--btn:hover {
+            background: linear-gradient(90deg, #c0392b, #a93226);
+            transform: translateY(-2px);
+        }
+        .back-btn {
+            background: #7f8c8d;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .back-btn:hover {
+            background: #6c757d;
+            transform: translateY(-2px);
+        }
+        .error {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        .success {
+            color: green;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .errorlist {
+            color: red;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+        img.preview {
+            max-width: 100px;
+            max-height: 100px;
+            margin-top: 0.5rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="https://via.placeholder.com/100" alt="Logo">
+            <h3>Larkon</h3>
+        </div>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'user_management' %}">Users</a></li>
+            <li class="active"><a href="{% url 'product_list' %}">Products</a></li>
+            <li><a href="{% url 'category_list' %}">Category</a></li>
+            <li><a href="#">Orders</a></li>
+            <li><a href="#">Invoices</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <div class="header">
+            <div class="user-profile">
+                <img src="https://via.placeholder.com/30" alt="User">
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+            </div>
+        </div>
+        <div class="variant-section">
+            <h2>Edit Variant - {{ product.name }}</h2>
+            <a href="{% url 'products:manage_variants' product_id=product.id %}" class="back-btn">Back to Variants</a>
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="{% if message.tags == 'success' %}success{% else %}error{% endif %}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+            {% if form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_color">Color</label>
+                    {{ form.color }}
+                    {% if form.color.errors %}
+                        <div class="error">{{ form.color.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="id_price">Price</label>
+                    {{ form.price }}
+                    {% if form.price.errors %}
+                        <div class="error">{{ form.price.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="id_image_main">Main Image</label>
+                    {{ form.image_main }}
+                    {% if variant.image_main %}
+                        <p>Current Image: <img src="{{ variant.image_main.url }}" alt="Main Image" class="preview"></p>
+                    {% endif %}
+                    {% if form.image_main.errors %}
+                        <div class="error">{{ form.image_main.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="id_image_1">Image 1</label>
+                    {{ form.image_1 }}
+                    {% if variant.image_1 %}
+                        <p>Current Image: <img src="{{ variant.image_1.url }}" alt="Image 1" class="preview"></p>
+                    {% endif %}
+                    {% if form.image_1.errors %}
+                        <div class="error">{{ form.image_1.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="id_image_2">Image 2</label>
+                    {{ form.image_2 }}
+                    {% if variant.image_2 %}
+                        <p>Current Image: <img src="{{ variant.image_2.url }}" alt="Image 2" class="preview"></p>
+                    {% endif %}
+                    {% if form.image_2.errors %}
+                        <div class="error">{{ form.image_2.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="id_image_3">Image 3</label>
+                    {{ form.image_3 }}
+                    {% if variant.image_3 %}
+                        <p>Current Image: <img src="{{ variant.image_3.url }}" alt="Image 3" class="preview"></p>
+                    {% endif %}
+                    {% if form.image_3.errors %}
+                        <div class="error">{{ form.image_3.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="account__login--btn">Update Variant</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

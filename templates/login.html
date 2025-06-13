@@ -1,0 +1,203 @@
+
+{% load static %}
+{% load socialaccount %}
+
+<!doctype html>
+<html lang="en">
+
+
+<!-- Mirrored from risingtheme.com/html/demo-suruchi-v1/suruchi/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 23 Nov 2024 05:25:38 GMT -->
+<head>
+  <meta charset="utf-8">
+  <title>Suruchi - Account Page</title>
+  <meta name="description" content="Morden Bootstrap HTML5 Template">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    
+  <!-- ======= All CSS Plugins here ======== -->
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/swiper-bundle.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/glightbox.min.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet">
+
+  <!-- Plugin css -->
+  <link rel="stylesheet" href="{% static 'assets/css/vendor/bootstrap.min.css' %}">
+
+  <!-- Custom Style CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+
+</head>
+
+<body>
+
+<style>
+  /* Message Container - Centers messages */
+.message-container {
+position: fixed;
+top: 10%;
+left: 50%;
+transform: translate(-50%, -50%);
+z-index: 9999;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+}
+
+/* Message Box Styling */
+.alert {
+background-color: #333;
+color: white;
+padding: 15px 20px;
+border-radius: 8px;
+font-size: 16px;
+text-align: center;
+margin: 10px 0;
+min-width: 300px;
+box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+position: relative;
+}
+
+/* Success & Error Colors */
+.alert-success { background-color: #28a745; }
+.alert-error { background-color: #dc3545; }
+.alert-warning { background-color: #ffc107; }
+
+/* Close Button */
+.close-btn {
+position: absolute;
+top: 5px;
+right: 10px;
+border: none;
+background: none;
+color: white;
+font-size: 20px;
+cursor: pointer;
+}
+</style>
+
+
+{% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+                <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+    <!-- Start preloader -->
+    <div id="preloader">
+        <div id="ctn-preloader" class="ctn-preloader">
+            <div class="animation-preloader">
+                <div class="spinner"></div>
+                <div class="txt-loading">
+                    <span data-text-preloader="L" class="letters-loading">
+                        L
+                    </span>
+                    
+                    <span data-text-preloader="O" class="letters-loading">
+                        O
+                    </span>
+                    
+                    <span data-text-preloader="A" class="letters-loading">
+                        A
+                    </span>
+                    
+                    <span data-text-preloader="D" class="letters-loading">
+                        D
+                    </span>
+                    
+                    <span data-text-preloader="I" class="letters-loading">
+                        I
+                    </span>
+                    
+                    <span data-text-preloader="N" class="letters-loading">
+                        N
+                    </span>
+                    
+                    <span data-text-preloader="G" class="letters-loading">
+                        G
+                    </span>
+                </div>
+            </div>	
+
+            <div class="loader-section section-left"></div>
+            <div class="loader-section section-right"></div>
+        </div>
+    </div>
+   
+
+
+
+
+
+        <!-- Start login section  -->
+        <div class="login__section section--padding">
+            <div class="container">
+                <form action="{% url 'login'%}" method="post">
+                    {% csrf_token %}
+                    <div class="login__section--inner">
+                        <div class="row row-cols-md-2 row-cols-1">
+                            <div class="col">
+                                <div class="account__login">
+                                    <div class="account__login--header mb-25">
+                                        <h2 class="account__login--header__title h3 mb-10">Login</h2>
+                                        <p class="account__login--header__desc">Login if you area a returning customer.</p>
+                                    </div>
+                                    <div class="account__login--inner">
+                                        <input class="account__login--input" name="username" placeholder="Email Addres" type="text">
+                                        <input class="account__login--input" name="password" placeholder="Password" type="password">
+                                        <div class="account__login--remember__forgot mb-15 d-flex justify-content-between align-items-center">
+                                            <div class="account__login--remember position__relative">
+                                                <input class="checkout__checkbox--input" id="check1" type="checkbox">
+                                                <span class="checkout__checkbox--checkmark"></span>
+                                                <label class="checkout__checkbox--label login__remember--label" for="check1">
+                                                    Remember me</label>
+                                            </div>
+                                            <a class="account__login--forgot" href="{% url 'forgot_password' %}">Forgot Your Password?</a>
+                                        </div>
+                                        <button class="account__login--btn primary__btn" type="submit">Login</button>
+                                        <div class="account__login--divide">
+                                            <span class="account__login--divide__text">OR</span>
+                                        </div>
+                                        <div class="account__social d-flex justify-content-center mb-15">
+                                            <a class="account__social--link google" href="{% provider_login_url 'google' %}">Google</a>
+                                            
+                                        </div>
+                                        <p class="account__login--signup__text">Don,t Have an Account? <a href="{% url 'register' %}">Sign up now</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+
+
+                                    <h1 style="padding-left: 125px; padding-top: 200px;">MANIFEX CLOTHING</h1>
+
+
+                                </div>
+                        </div>
+                    </div>
+                </form>
+            </div>     
+        </div>
+        <!-- End login section  -->
+
+
+    <!-- Scroll top bar -->
+    <button id="scroll__top"><svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M112 244l144-144 144 144M256 120v292"/></svg></button>
+
+    
+  <!-- All Script JS Plugins here  -->
+  <script src="{% static 'assets/js/vendor/popper.js' %}" defer="defer"></script>
+  <script src="{% static 'assets/js/vendor/bootstrap.min.js' %}" defer="defer"></script>
+  <script src="{% static 'assets/js/plugins/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/glightbox.min.js' %}"></script>
+
+  <!-- Customscript js -->
+  <script src="{% static 'assets/js/script.js' %}"></script>
+  
+</body>
+</html>

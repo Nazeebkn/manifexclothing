@@ -1,0 +1,165 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Suruchi - Add Address</title>
+  <meta name="description" content="Morden Bootstrap HTML5 Template">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/swiper-bundle.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/glightbox.min.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'assets/css/vendor/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+  <style>
+    .alert {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .form-error {
+      color: #721c24;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <main class="main__content_wrapper">
+    <section class="breadcrumb__section breadcrumb__bg">
+      <div class="container">
+        <div class="row row-cols-1">
+          <div class="col">
+            <div class="breadcrumb__content text-center">
+              <h1 class="breadcrumb__content--title text-white mb-25">Add New Address</h1>
+              <ul class="breadcrumb__content--menu d-flex justify-content-center">
+                <li class="breadcrumb__content--menu__items"><a class="text-white" href="{% url 'index' %}">Home</a></li>
+                <li class="breadcrumb__content--menu__items"><a class="text-white" href="{% url 'checkout' %}">Checkout</a></li>
+                <li class="breadcrumb__content--menu__items"><span class="text-white">Add Address</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    <section class="cart__section section--padding">
+      <div class="container">
+        <div class="cart__section--inner">
+          <h2 class="cart__title mb-40">Add New Address</h2>
+          {% if messages %}
+            <div class="messages">
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <form action="{% url 'checkout_add_address' %}" method="POST">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-12">
+                <div class="checkout__content--step section__shipping--address">
+                  <div class="section__header mb-25">
+                    <h3 class="section__header--title">Address Details</h3>
+                  </div>
+                  <div class="section__shipping--address__content">
+                    <div class="row">
+                      <div class="col-md-6 mb-20">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="Enter your full name" value="{{ form_data.name|default:'' }}">
+                        {% for message in messages %}
+                          {% if 'name' in message %}
+                            <div class="form-error">{{ message }}</div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                      <div class="col-md-6 mb-20">
+                        <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                        <input type="text" name="phone_number" class="form-control" placeholder="Enter your phone number" value="{{ form_data.phone_number|default:'' }}" required>
+                        {% for message in messages %}
+                          {% if 'phone_number' in message %}
+                            <div class="form-error">{{ message }}</div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                      <div class="col-12 mb-20">
+                        <label class="form-label">Street Address <span class="text-danger">*</span></label>
+                        <input type="text" name="street_address" class="form-control" placeholder="Enter your street address" value="{{ form_data.street_address|default:'' }}" required>
+                        {% for message in messages %}
+                          {% if 'street_address' in message %}
+                            <div class="form-error">{{ message }}</div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                      <div class="col-md-6 mb-20">
+                        <label class="form-label">City <span class="text-danger">*</span></label>
+                        <input type="text" name="city" class="form-control" placeholder="Enter your city" value="{{ form_data.city|default:'' }}" required>
+                        {% for message in messages %}
+                          {% if 'city' in message %}
+                            <div class="form-error">{{ message }}</div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                      <div class="col-md-6 mb-20">
+                        <label class="form-label">State <span class="text-danger">*</span></label>
+                        <input type="text" name="state" class="form-control" placeholder="Enter your state" value="{{ form_data.state|default:'' }}" required>
+                        {% for message in messages %}
+                          {% if 'state' in message %}
+                            <div class="form-error">{{ message }}</div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                      <div class="col-md-6 mb-20">
+                        <label class="form-label">Country <span class="text-danger">*</span></label>
+                        <input type="text" name="country" class="form-control" placeholder="Enter your country" value="{{ form_data.country|default:'' }}" required>
+                        {% for message in messages %}
+                          {% if 'country' in message %}
+                            <div class="form-error">{{ message }}</div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                      <div class="col-md-6 mb-20">
+                        <label class="form-label">Postal Code <span class="text-danger">*</span></label>
+                        <input type="text" name="postal_code" class="form-control" placeholder="Enter your postal code" value="{{ form_data.postal_code|default:'' }}" required>
+                        {% for message in messages %}
+                          {% if 'postal_code' in message %}
+                            <div class="form-error">{{ message }}</div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                      <div class="col-12 mb-20">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="is_default" id="is_default" {% if form_data.is_default %}checked{% endif %}>
+                          <label class="form-check-label" for="is_default">Set as default address</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="continue__shopping d-flex justify-content-between">
+                  <a class="continue__shopping--link" href="{% url 'checkout' %}">Return to Checkout</a>
+                  <button type="submit" class="cart__summary--footer__btn primary__btn checkout">Save Address</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <button id="scroll__top"><svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M112 244l144-144 144 144M256 120v292"/></svg></button>
+
+  <script src="{% static 'assets/js/vendor/popper.js' %}" defer="defer"></script>
+  <script src="{% static 'assets/js/vendor/bootstrap.min.js' %}" defer="defer"></script>
+  <script src="{% static 'assets/js/plugins/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/js/script.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,1024 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>MANIFEX CLOTHING - {{ product.product.name }}</title>
+  <meta name="description" content="Modern Bootstrap HTML5 Template">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/swiper-bundle.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/glightbox.min.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'assets/css/vendor/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+  <style>
+    /* Existing styles for images and navigation */
+    .zoom-container {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+
+    .product__media--preview__items--img {
+      transition: transform 0.5s ease;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      cursor: zoom-in;
+    }
+
+    .zoom-container:hover .product__media--preview__items--img {
+      transform: scale(1.5);
+    }
+
+    .product__media--nav .swiper-slide {
+      opacity: 0.6;
+      transition: opacity 0.3s ease, border 0.3s ease;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .product__media--nav .swiper-slide-thumb-active {
+      opacity: 1;
+      border: 2px solid #007bff;
+    }
+
+    .product__media--nav__items--img {
+      width: 100%;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .swiper-button-next,
+    .swiper-button-prev {
+      color: #007bff;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      transition: background 0.3s ease;
+    }
+
+    .swiper-button-next:hover,
+    .swiper-button-prev:hover {
+      background: rgba(0, 123, 255, 0.9);
+      color: #fff;
+    }
+
+    /* Styles for product details info */
+    .product__details--info {
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+    }
+
+    .product__details--info__title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      font-family: 'Jost', sans-serif;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .product__details--info__title:hover::after {
+      width: 100px;
+      background: #007bff;
+    }
+
+    .product__details--info__title::after {
+      content: '';
+      width: 0;
+      height: 3px;
+      background: transparent;
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+
+    .product__details--info__price {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .current__price {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #e74c3c;
+      font-family: 'Jost', sans-serif;
+    }
+
+    /* Styles for offer display */
+    .offer__badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #e74c3c, #c0392b);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 500;
+      font-family: 'Jost', sans-serif;
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .offer__badge::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .offer__badge:hover::before {
+      left: 100%;
+    }
+
+    .offer__badge:hover {
+      background: linear-gradient(90deg, #c0392b, #a93226);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+    }
+
+    .original__price {
+      font-size: 1.2rem;
+      color: #777;
+      text-decoration: line-through;
+      font-family: 'Jost', sans-serif;
+    }
+
+    .discounted__price {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #2ecc71;
+      font-family: 'Jost', sans-serif;
+    }
+
+    .offer__details {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #555;
+      font-family: 'Jost', sans-serif;
+    }
+
+    .offer__details span {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    /* Styles for description, variants, and reviews */
+    .product__details--info__desc__wrapper {
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    .product__details--info__desc__header {
+      background: #dc0c0c;
+      color: #fff;
+      padding: 10px 15px;
+      font-size: 1.5rem;
+      font-weight: 500;
+      font-family: 'Jost', sans-serif;
+    }
+
+    .product__details--info__desc {
+      font-size: 1.3rem;
+      color: #4a4a4a;
+      line-height: 1.7;
+      font-family: 'Jost', sans-serif;
+      padding: 15px;
+      background: #fff;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(-20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .variant__selection {
+      margin-bottom: 20px;
+    }
+
+    .variant__selection__title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      font-family: 'Jost', sans-serif;
+      margin-bottom: 8px;
+    }
+
+    .variant__options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .variant__option--size {
+      padding: 8px 14px;
+      font-size: 1.4rem;
+      font-family: 'Jost', sans-serif;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .variant__option--size:hover {
+      bordercolor: #007bff;
+      background: #f0f7ff;
+    }
+
+    .variant__option--size.active {
+      background: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+
+    .variant__option--size:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .variant__option--color {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .variant__option--color:hover {
+      border-color: #007bff;
+      transform: scale(1.2);
+    }
+
+    .variant__option--color.active {
+      border: 2px solid #007bff;
+      box-shadow: 0 0 6px rgba(0,123,255,0.5);
+    }
+
+    .variant__option--color:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .action__btn {
+      display: inline-block;
+      padding: 12px 24px;
+      font-size: 1.4rem;
+      font-weight: 500;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 4px;
+      margin-right: 10px;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      font-family: 'Jost', sans-serif;
+    }
+
+    .add-to-cart {
+      background-color: #dc0c0c;
+      color: rgb(255, 250, 250);
+    }
+
+    .add-to-cart:hover {
+      background-color: #b61d1d;
+      transform: translateY(-2px);
+    }
+
+    .add-to-wishlist {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .add-to-wishlist:hover {
+      background-color: #27ae60;
+      transform: translateY(-2px);
+    }
+
+    /* Review section styles */
+    .review__section {
+      margin-top: 20px;
+    }
+
+    .review__section h3 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      font-family: 'Jost', sans-serif;
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .review__section h3::after {
+      content: '';
+      width: 30px;
+      height: 2px;
+      background: #007bff;
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+    }
+
+    .review__grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    .review__card {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .review__card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .review__rating {
+      color: #f1c40f;
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+
+    .review__rating .star {
+      margin-right: 3px;
+    }
+
+    .review__author {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      font-family: 'Jost', sans-serif;
+      margin-bottom: 5px;
+    }
+
+    .review__date {
+      font-size: 1rem;
+      color: #777;
+      font-family: 'Jost', sans-serif;
+      margin-bottom: 8px;
+    }
+
+    .review__comment {
+      font-size: 1.5rem;
+      color: #4a4a4a;
+      line-height: 1.4;
+      font-family: 'Jost', sans-serif;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .product__media--nav__items--img {
+        height: 60px;
+      }
+
+      .swiper-button-next,
+      .swiper-button-prev {
+        width: 30px;
+        height: 30px;
+      }
+
+      .product__details--info {
+        padding: 15px;
+      }
+
+      .product__details--info__title {
+        font-size: 2rem;
+      }
+
+      .current__price {
+        font-size: 1.7rem;
+      }
+
+      .discounted__price {
+        font-size: 1.7rem;
+      }
+
+      .original__price {
+        font-size: 1rem;
+      }
+
+      .offer__badge {
+        font-size: 0.9rem;
+        padding: 4px 10px;
+      }
+
+      .offer__details {
+        font-size: 0.85rem;
+      }
+
+      .product__details--info__desc__header {
+        font-size: 1rem;
+        padding: 8px 12px;
+      }
+
+      .product__details--info__desc {
+        font-size: 0.95rem;
+        padding: 12px;
+      }
+
+      .variant__selection__title {
+        font-size: 1.1rem;
+      }
+
+      .variant__option--size {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+      }
+
+      .variant__option--color {
+        width: 25px;
+        height: 25px;
+      }
+
+      .review__section {
+        margin-top: 15px;
+      }
+
+      .review__section h3 {
+        font-size: 1.4rem;
+      }
+
+      .review__card {
+        padding: 12px;
+      }
+
+      .review__rating {
+        font-size: 1.2rem;
+      }
+
+      .review__author {
+        font-size: 1rem;
+      }
+
+      .review__comment {
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Alert styles */
+    .alert__messages {
+      margin-bottom: 20px;
+    }
+    .alert {
+      padding: 10px;
+      border-radius: 4px;
+      font-family: 'Jost', sans-serif;
+    }
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .alert .close {
+      font-size: 1rem;
+      line-height: 1;
+      color: inherit;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <!-- Start preloader -->
+  <div id="preloader">
+    <div id="ctn-preloader" class="ctn-preloader">
+      <div class="animation-preloader">
+        <div class="spinner"></div>
+        <div class="txt-loading">
+          <span data-text-preloader="L" class="letters-loading">L</span>
+          <span data-text-preloader="O" class="letters-loading">O</span>
+          <span data-text-preloader="A" class="letters-loading">A</span>
+          <span data-text-preloader="D" class="letters-loading">D</span>
+          <span data-text-preloader="I" class="letters-loading">I</span>
+          <span data-text-preloader="N" class="letters-loading">N</span>
+          <span data-text-preloader="G" class="letters-loading">G</span>
+        </div>
+      </div>
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+    </div>
+  </div>
+  <!-- End preloader -->
+
+  <!-- Start header area -->
+  <header class="header__section">
+    <div class="main__header header__sticky">
+      <div class="container-fluid">
+        <div class="main__header--inner position__relative d-flex justify-content-between align-items-center">
+          <div class="offcanvas__header--menu__open">
+            <a class="offcanvas__header--menu__open--btn" href="javascript:void(0)" data-offcanvas>
+              <svg xmlns="http://www.w3.org/2000/svg" class="ionicon offcanvas__header--menu__open--svg" viewBox="0 0 512 512">
+                <path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M80 160h352M80 256h352M80 352h352"/>
+              </svg>
+              <span class="visually-hidden">Menu Open</span>
+            </a>
+          </div>
+          <div class="main__logo">
+            <h1>MANIFEX CLOTHING</h1>
+          </div>
+          <div class="header__account header__sticky--none">
+            <ul class="d-flex">
+              <li class="header__account--items">
+                <a class="header__account--btn" href="{% url 'my_profile' %}">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="26.51" height="23.443" viewBox="0 0 512 512">
+                    <path d="M344 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                    <path d="M256 304c-87 0-175.3 48-191.64 138.6C62.39 453.52 68.57 464 80 464h352c11.44 0 17.62-10.48 15.65-21.4C431.3 352 343 304 256 304z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/>
+                  </svg>
+                  <span class="header__account--btn__text">My Account</span>
+                </a>
+              </li>
+              <li class="header__account--items d-none d-lg-block">
+                <a class="header__account--btn" href="{% url 'wishlist' %}">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28.51" height="23.443" viewBox="0 0 512 512">
+                    <path d="M352.92 80C288 80 256 144 256 144s-32-64-96.92-64c-52.76 0-94.54 44.14-95.08 96.81-1.1 109.33 86.73 187.08 183 252.42a16 16 0 0018 0c96.26-65.34 184.09-143.09 183-252.42-.54-52.67-42.32-96.81-95.08-96.81z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                  </svg>
+                  <span class="header__account--btn__text"> Wish List</span>
+                  <span class="items__count wishlist">02</span>
+                </a>
+              </li>
+              <li class="header__account--items">
+                <a class="header__account--btn minicart__open--btn" href="{% url 'cart' %}" data-offcanvas>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="26.51" height="23.443" viewBox="0 0 14.706 13.534">
+                    <g transform="translate(0 0)">
+                      <g>
+                        <path data-name="Path 16787" d="M4.738,472.271h7.814a.434.434,0,0,0,.414-.328l1.723-6.316a.466.466,0,0,0-.071-.4.424.424,0,0,0-.344-.179H3.745L3.437,463.6a.435.435,0,0,0-.421-.353H.431a.451.451,0,0,0,0,.9h2.24c.054.257,1.474,6.946,1.555,7.33a1.36,1.36,0,0,0-.779,1.242,1.326,1.326,0,0,0,1.293,1.354h7.812a.452.452,0,0,0,0-.9H4.74a.451.451,0,0,1,0-.9Zm8.966-6.317-1.477,5.414H5.085l-1.149-5.414Z" transform="translate(0 -463.248)" fill="currentColor"/>
+                        <path data-name="Path 16788" d="M5.5,478.8a1.294,1.294,0,1,0,1.293-1.353A1.325,1.325,0,0,0,5.5,478.8Zm1.293-.451a.452.452,0,1,1-.431.451A.442.442,0,0,1,6.793,478.352Z" transform="translate(-1.191 -466.622)" fill="currentColor"/>
+                        <path data-name="Path 16789" d="M13.273,478.8a1.294,1.294,0,1,0,1.293-1.353A1.325,1.325,0,0,0,13.273,478.8Zm1.293-.451a.452.452,0,1,1-.431.451A.442.442,0,0,1,14.566,478.352Z" transform="translate(-2.875 -466.622)" fill="currentColor"/>
+                      </g>
+                    </g>
+                  </svg>
+                  <span class="header__account--btn__text"> My cart</span>
+                  <span class="items__count">02</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header__bottom">
+      <div class="container-fluid">
+        <div class="header__bottom--inner position__relative d-none d-lg-flex justify-content-between align-items-center">
+          <div class="header__menu">
+            <nav class="header__menu--navigation">
+              <ul class="d-flex">
+                <li class="header__menu--items">
+                  <a class="header__menu--link" href="{% url 'index' %}">Home</a>
+                </li>
+                <li class="header__menu--items">
+                  <a class="header__menu--link" href="{% url 'about' %}">About Us</a>
+                </li>
+                <li class="header__menu--items">
+                  <a class="header__menu--link" href="{% url 'contact' %}">Contact</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- End header area -->
+
+  <main class="main__content_wrapper">
+    <!-- Start product details section -->
+    <section class="product__details--section section--padding">
+      <div class="container">
+        <div class="row row-cols-lg-2 row-cols-md-2">
+          <div class="col">
+            <div class="product__details--media">
+              <div class="product__media--preview swiper">
+                <div class="swiper-wrapper">
+                  <div class="swiper-slide zoom-container">
+                    <div class="product__media--preview__items">
+                      <a class="product__media--preview__items--link glightbox" data-gallery="product-media-preview" href="{{ product.image.url|default:'/media/placeholder.jpg' }}">
+                        <img class="product__media--preview__items--img" src="{{ product.image_main.url|default:'/media/placeholder.jpg' }}" alt="{{ product.product.name }}">
+                      </a>
+                      <div class="product__media--view__icon">
+                        <a class="product__media--view__icon--link glightbox" href="{{ product.image.url }}" data-gallery="product-media-preview">
+                          <svg class="product__media--view__icon--svg" xmlns="http://www.w3.org/2000/svg" width="22.51" height="22.443" viewBox="0 0 512 512">
+                            <path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/>
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/>
+                          </svg>
+                        </a>
+                      </div>
+                      <p style="font-size: 0.8rem; color: #777;">Debug: {{ product.image.url}}</p>
+                    </div>
+                  </div>
+                  {% if product.image_1 %}
+                  <div class="swiper-slide zoom-container">
+                    <div class="product__media--preview__items">
+                      <a class="product__media--preview__items--link glightbox" data-gallery="product-media-preview" href="{{ product.image_1.url }}">
+                        <img class="product__media--preview__items--img" src="{{ product.image_1.url }}" alt="{{ product.product.name }}">
+                      </a>
+                      <div class="product__media--view__icon">
+                        <a class="product__media--view__icon--link glightbox" href="{{ product.image_1.url }}" data-gallery="product-media-preview">
+                          <svg class="product__media--view__icon--svg" xmlns="http://www.w3.org/2000/svg" width="22.51" height="22.443" viewBox="0 0 512 512">
+                            <path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/>
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/>
+                          </svg>
+                        </a>
+                      </div>
+                      <p style="font-size: 0.8rem; color: #777;">Debug: {{ product.image_1.url }}</p>
+                    </div>
+                  </div>
+                  {% endif %}
+                  {% if product.image_2 %}
+                  <div class="swiper-slide zoom-container">
+                    <div class="product__media--preview__items">
+                      <a class="product__media--preview__items--link glightbox" data-gallery="product-media-preview" href="{{ product.image_2.url }}">
+                        <img class="product__media--preview__items--img" src="{{ product.image_2.url }}" alt="{{ product.product.name }}">
+                      </a>
+                      <div class="product__media--view__icon">
+                        <a class="product__media--view__icon--link glightbox" href="{{ product.image_2.url }}" data-gallery="product-media-preview">
+                          <svg class="product__media--view__icon--svg" xmlns="http://www.w3.org/2000/svg" width="22.51" height="22.443" viewBox="0 0 512 512">
+                            <path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/>
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/>
+                          </svg>
+                        </a>
+                      </div>
+                      <p style="font-size: 0.8rem; color: #777;">Debug: {{ product.image_2.url }}</p>
+                    </div>
+                  </div>
+                  {% endif %}
+                  {% if product.image_3 %}
+                  <div class="swiper-slide zoom-container">
+                    <div class="product__media--preview__items">
+                      <a class="product__media--preview__items--link glightbox" data-gallery="product-media-preview" href="{{ product.image_3.url }}">
+                        <img class="product__media--preview__items--img" src="{{ product.image_3.url }}" alt="{{ product.product.name }}">
+                      </a>
+                      <div class="product__media--view__icon">
+                        <a class="product__media--view__icon--link glightbox" href="{{ product.image_3.url }}" data-gallery="product-media-preview">
+                          <svg class="product__media--view__icon--svg" xmlns="http://www.w3.org/2000/svg" width="22.51" height="22.443" viewBox="0 0 512 512">
+                            <path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/>
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/>
+                          </svg>
+                        </a>
+                      </div>
+                      <p style="font-size: 0.8rem; color: #777;">Debug: {{ product.image_3.url }}</p>
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="product__media--nav swiper">
+                <div class="swiper-wrapper">
+                  <div class="swiper-slide">
+                    <div class="product__media--nav__items">
+                      <img class="product__media--nav__items--img" src="{{ product.image_main.url|default:'/media/placeholder.jpg' }}" alt="{{ product.product.name }}">
+                    </div>
+                  </div>
+                  {% if product.image_1 %}
+                  <div class="swiper-slide">
+                    <div class="product__media--nav__items">
+                      <img class="product__media--nav__items--img" src="{{ product.image_1.url }}" alt="{{ product.product.name }}">
+                    </div>
+                  </div>
+                  {% endif %}
+                  {% if product.image_2 %}
+                  <div class="swiper-slide">
+                    <div class="product__media--nav__items">
+                      <img class="product__media--nav__items--img" src="{{ product.image_2.url }}" alt="{{ product.product.name }}">
+                    </div>
+                  </div>
+                  {% endif %}
+                  {% if product.image_3 %}
+                  <div class="swiper-slide">
+                    <div class="product__media--nav__items">
+                      <img class="product__media--nav__items--img" src="{{ product.image_3.url }}" alt="{{ product.product.name }}">
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col">
+            <div class="product__details--info">
+              {% if messages %}
+              <div class="alert__messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
+                  {{ message }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
+                {% endfor %}
+              </div>
+              {% endif %}
+              
+              <h2 class="product__details--info__title">{{ product.product.name }}</h2>
+              <div class="product__details--info__price">
+                {% if applied_discount %}
+                  <span class="original__price">₹{{ original_price }}</span>
+                  <span class="discounted__price">₹{{ discounted_price|floatformat:2 }}</span>
+                  <span class="offer__badge">{{ applied_discount }}% OFF</span>
+                {% else %}
+                  <span class="current__price">₹{{ product.product.price }}</span>
+                {% endif %}
+              </div>
+              {% if product_offer or category_offer %}
+                <div class="offer__details">
+                  {% if product_offer %}
+                    <span>Product Offer: {{ product_offer.discount_percentage }}% off until {{ product_offer.valid_until|date:"Y-m-d H:i" }}</span>
+                  {% endif %}
+                  {% if category_offer %}
+                    <span>Category Offer: {{ category_offer.discount_percentage }}% off on {{ product.product.category.name }} until {{ category_offer.valid_until|date:"Y-m-d H:i" }}</span>
+                  {% endif %}
+                </div>
+              {% endif %}
+              <div class="product__details--info__desc__wrapper">
+                <div class="product__details--info__desc__header">Product Details</div>
+                <p class="product__details--info__desc">{{ product.product.description }}</p>
+              </div>
+              <!-- Variant Selection -->
+              {% if variants %}
+              <div class="variant__selection">
+                <div class="variant__size">
+                  <h4 class="variant__selection__title">Size:</h4>
+                  <div class="variant__options" id="variant-size-options">
+                    {% for size in sizes %}
+                    <button class="variant__option--size" data-size-id="{{ size.id }}" data-tooltip="{{ size.size }}">
+                      {{ size.size }}
+                    </button>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="variant__color">
+                  <h4 class="variant__selection__title">Color:</h4>
+                  <div class="variant__options" id="variant-color-options">
+                    {% for variant in variants %}
+                    <a href="{% url 'product_details' variant.id %}">
+                      <div class="variant__option--color"
+                           style="background-color: {{ variant.color|lower }};"
+                           title="{{ variant.color }}"
+                           data-variant-id="{{ variant.id }}"
+                           data-tooltip="{{ variant.color }}"
+                           aria-label="Select color {{ variant.color }}">
+                      </div>
+                    </a>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+              {% else %}
+              <p style="font-size: 1rem; color: #777; font-family: 'Jost', sans-serif;">No variants available for this product.</p>
+              {% endif %}
+              <!-- Action Buttons -->
+              <div class="product__actions">
+                {% if variants %}
+                <form id="add-to-cart-form" action="{% url 'add_to_cart' product.id %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="size_id" id="selected-size-id">
+                  <button type="submit" id="add-to-cart-btn" class="action__btn add-to-cart">Add to Cart</button>
+                </form>
+                <form id="add-to-wishlist-form" action="{% url 'add_to_wishlist' product.id %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="variant_id" value="{{ product.id }}">
+                  <input type="hidden" name="size_id" id="selected-wishlist-size-id">
+                  <button type="submit" id="add-to-wishlist-btn" class="action__btn add-to-wishlist">Add to Wishlist</button>
+                </form>
+                {% else %}
+                <a href="#" class="action__btn add-to-cart disabled" onclick="return false;">Add to Cart</a>
+                <a href="{% url 'add_to_wishlist' product.id %}" class="action__btn add-to-wishlist">Add to Wishlist</a>
+                {% endif %}
+              </div>
+              <!-- Review section -->
+              <div class="review__section">
+                <h3>Customer Reviews</h3>
+                <div class="review__grid">  
+                  <div class="review__card">
+                    <div class="review__rating">
+                      <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">☆</span>
+                    </div>
+                    <div class="review__author">John Doe</div>
+                    <div class="review__date">April 15, 2025</div>
+                    <p class="review__comment">Great product, super quality! Shipping was a bit slow, but worth it.</p>
+                  </div>
+                  <div class="review__card">
+                    <div class="review__rating">
+                      <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                    </div>
+                    <div class="review__author">Sarah Smith</div>
+                    <div class="review__date">April 10, 2025</div>
+                    <p class="review__comment">Absolutely love it! Stylish and comfy, best buy ever!</p>
+                  </div>
+                  <div class="review__card">
+                    <div class="review__rating">
+                      <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">☆</span><span class="star">☆</span>
+                    </div>
+                    <div class="review__author">Mike Johnson</div>
+                    <div class="review__date">April 5, 2025</div>
+                    <p class="review__comment">Okay product, but material could be better for the price.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End product details section -->
+  </main>
+  <!-- Scroll top bar -->
+  <button id="scroll__top"><svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M112 244l144-144 144 144M256 120v292"/></svg></button>
+  <!-- All Script JS Plugins here -->
+  <script src="{% static 'assets/js/vendor/popper.js' %}" defer="defer"></script>
+  <script src="{% static 'assets/js/vendor/bootstrap.min.js' %}" defer="defer"></script>
+  <script src="{% static 'assets/js/plugins/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/js/script.js' %}"></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Swiper and GLightbox initialization
+    var swiper = new Swiper('.product__media--preview', {
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      thumbs: {
+        swiper: new Swiper('.product__media--nav', {
+          slidesPerView: 4,
+          spaceBetween: 10,
+          freeMode: true,
+          watchSlidesProgress: true,
+        }),
+      },
+    });
+
+    const lightbox = GLightbox({ selector: '.glightbox' });
+
+    // Variant selection (size and color)
+    let selectedSizeId = '';
+    let selectedVariantId = '{{ product.id }}'; // Default to the current variant
+
+    // Add a hidden input for variant_id in both forms
+    const variantInputCart = document.createElement('input');
+    variantInputCart.type = 'hidden';
+    variantInputCart.name = 'variant_id';
+    variantInputCart.id = 'selected-variant-id';
+    variantInputCart.value = selectedVariantId;
+    document.getElementById('add-to-cart-form').appendChild(variantInputCart);
+
+    const variantInputWishlist = document.querySelector('#add-to-wishlist-form input[name="variant_id"]');
+    variantInputWishlist.value = selectedVariantId;
+
+    // Function to select a size
+    function selectSize(size, sizeId) {
+      selectedSizeId = sizeId;
+      document.querySelectorAll('#variant-size-options .variant__option--size').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-size-id') === sizeId) {
+          btn.classList.add('active');
+        }
+      });
+      document.getElementById('selected-size-id').value = sizeId; // For Add to Cart
+      document.getElementById('selected-wishlist-size-id').value = sizeId; // For Add to Wishlist
+    }
+
+    // Function to select a color
+    function selectColor(variantId) {
+      selectedVariantId = variantId;
+      document.querySelectorAll('#variant-color-options .variant__option--color').forEach(div => {
+        div.classList.remove('active');
+        if (div.getAttribute('data-variant-id') === variantId) {
+          div.classList.add('active');
+        }
+      });
+      document.getElementById('selected-variant-id').value = variantId; // For Add to Cart
+      variantInputWishlist.value = variantId; // For Add to Wishlist
+    }
+
+    // Initialize first size as selected
+    const firstSizeBtn = document.querySelector('#variant-size-options .variant__option--size');
+    if (firstSizeBtn) {
+      selectSize(firstSizeBtn.textContent.trim(), firstSizeBtn.getAttribute('data-size-id'));
+    }
+
+    // Initialize current variant as selected
+    selectColor(selectedVariantId);
+
+    // Size selection event listener
+    document.querySelectorAll('#variant-size-options .variant__option--size').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectSize(btn.textContent.trim(), btn.getAttribute('data-size-id'));
+      });
+    });
+
+    // Color selection event listener
+    document.querySelectorAll('#variant-color-options .variant__option--color').forEach(div => {
+      div.addEventListener('click', () => {
+        selectColor(div.getAttribute('data-variant-id'));
+      });
+    });
+
+    // Form submission validation for Add to Cart
+    document.getElementById('add-to-cart-form').addEventListener('submit', (e) => {
+      if (!selectedSizeId) {
+        e.preventDefault();
+        alert('Please select a size.');
+      } else if (!selectedVariantId) {
+        e.preventDefault();
+        alert('Please select a color.');
+      } else {
+        console.log('Add to Cart Form submitting:', { selectedVariantId, selectedSizeId, action: e.target.action });
+      }
+    });
+
+    // Form submission validation for Add to Wishlist
+    document.getElementById('add-to-wishlist-form').addEventListener('submit', (e) => {
+      if (!selectedSizeId) {
+        e.preventDefault();
+        alert('Please select a size.');
+      } else if (!selectedVariantId) {
+        e.preventDefault();
+        alert('Please select a color.');
+      } else {
+        console.log('Add to Wishlist Form submitting:', { selectedVariantId, selectedSizeId, action: e.target.action });
+      }
+    });
+
+    // Enhanced image zooming functionality
+    const zoomContainers = document.querySelectorAll('.zoom-container');
+    zoomContainers.forEach(container => {
+      const img = container.querySelector('.product__media--preview__items--img');
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const xPercent = (x / rect.width) * 100;
+        const yPercent = (y / rect.height) * 100;
+        img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+        img.style.transform = 'scale(1.5)';
+      });
+      container.addEventListener('mouseleave', () => {
+        img.style.transform = 'scale(1)';
+        img.style.transformOrigin = 'center center';
+      });
+    });
+  });
+  </script>
+</body>
+</html>

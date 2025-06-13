@@ -1,0 +1,112 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Manifex Clothing - Register</title>
+    <meta name="description" content="Register for Manifex Clothing">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}">
+
+    <!-- CSS Plugins -->
+    <link rel="stylesheet" href="{% static 'assets/css/plugins/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/plugins/glightbox.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/vendor/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div id="ctn-preloader" class="ctn-preloader">
+            <div class="animation-preloader">
+                <div class="spinner"></div>
+                <div class="txt-loading">
+                    <span data-text-preloader="L" class="letters-loading">L</span>
+                    <span data-text-preloader="O" class="letters-loading">O</span>
+                    <span data-text-preloader="A" class="letters-loading">A</span>
+                    <span data-text-preloader="D" class="letters-loading">D</span>
+                    <span data-text-preloader="I" class="letters-loading">I</span>
+                    <span data-text-preloader="N" class="letters-loading">N</span>
+                    <span data-text-preloader="G" class="letters-loading">G</span>
+                </div>
+            </div>
+            <div class="loader-section section-left"></div>
+            <div class="loader-section section-right"></div>
+        </div>
+    </div>
+
+    <!-- Login Section -->
+    <div class="login__section section--padding">
+        <div class="container">
+            <form action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+                <div class="login__section--inner">
+                    <div class="row row-cols-md-2 row-cols-1">
+                        <div class="col">
+                            <div class="account__login">
+                                <div class="account__login--header mb-25">
+                                    <h2 class="account__login--header__title h3 mb-10">Create an Account</h2>
+                                    <p class="account__login--header__desc">Join Manifex Clothing today!</p>
+                                </div>
+                                <div class="account__login--inner">
+                                    <!-- Display Django Messages -->
+                                    {% if messages %}
+                                        {% for message in messages %}
+                                            <p class="error-message" style="color: #dc3545;">{{ message }}</p>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    <!-- Form Fields -->
+                                    <input class="account__login--input" placeholder="Username" type="text" name="username" value="{{ form_data.username }}" required>
+                                   
+                                    <input class="account__login--input" placeholder="First Name" type="text" name="first_name" value="{{ form_data.first_name }}" required>
+                                    <input class="account__login--input" placeholder="Last Name" type="text" name="last_name" value="{{ form_data.last_name }}" required>
+                                    <input class="account__login--input" placeholder="Email Address" type="email" name="email" value="{{ form_data.email }}" required>
+                                    <input class="account__login--input" placeholder="Password" type="password" name="password" required>
+                                    <input class="account__login--input" placeholder="Confirm Password" type="password" name="confirm_password" required>
+                                    <input class="account__login--input" placeholder="Referral Code" type="text" name="referral_code">
+                                    
+                                    <!-- Terms Checkbox -->
+                                    <div class="account__login--remember position__relative mb-15">
+                                        <input class="checkout__checkbox--input" id="check2" type="checkbox" required>
+                                        <span class="checkout__checkbox--checkmark"></span>
+                                        <label class="checkout__checkbox--label login__remember--label" for="check2">
+                                            I agree to the <a href="#" class="text-primary">terms & conditions</a>
+                                        </label>
+                                    </div>
+
+                                    <!-- Submit Button -->
+                                    <button class="account__login--btn primary__btn" type="submit">Register</button>
+
+                                    <!-- Login Link -->
+                                    <p class="account__login--signup__text">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h1 style="padding-left: 125px; padding-top: 200px;">MANIFEX CLOTHING</h1>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scroll Top Bar -->
+    <button id="scroll__top">
+        <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M112 244l144-144 144 144M256 120v292"/>
+        </svg>
+    </button>
+
+    <!-- Scripts -->
+    <script src="{% static 'assets/js/vendor/popper.js' %}"></script>
+    <script src="{% static 'assets/js/vendor/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/swiper-bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/glightbox.min.js' %}"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
+</body>
+</html>

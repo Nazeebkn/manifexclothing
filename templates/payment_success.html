@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Suruchi - Payment Success</title>
+    <meta name="description" content="Payment Success Page">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/plugins/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/plugins/glightbox.min.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'assets/css/vendor/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <style>
+        body {
+            font-family: 'Jost', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .order-confirmation {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        .order-title {
+            font-size: 3.5rem;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .thank-you-message {
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: #2e7d32;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        .alert-success {
+            background-color: #e6f4ea;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+        .order-info-card, .next-steps-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        .order-info-card h3, .next-steps-card h3 {
+            font-size: 2.2rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: #222;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .order-info-card p, .next-steps-card p {
+            font-size: 1.5rem;
+            color: #555;
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+        .order-info-card p strong {
+            color: #222;
+        }
+        .next-steps-card .order-footer {
+            margin-top: 20px;
+        }
+        .next-steps-card .btn {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .order-footer p {
+            font-size: 1.8rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .order-footer .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.3s;
+            margin-right: 10px;
+            background: #2c3e50;
+            color: #fff;
+            border: none;
+        }
+        .order-footer .btn:hover {
+            background: #34495e;
+        }
+        .order-footer .btn-download {
+            background: #2e7d32;
+        }
+        .order-footer .btn-download:hover {
+            background: #3a9d3f;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .order-title {
+                font-size: 2rem;
+            }
+            .thank-you-message {
+                font-size: 1.5rem;
+            }
+            .order-info-card h3, .next-steps-card h3 {
+                font-size: 1.8rem;
+            }
+            .order-info-card p, .next-steps-card p {
+                font-size: 1.2rem;
+            }
+            .order-footer .btn {
+                display: block;
+                margin-bottom: 10px;
+                width: 100%;
+                text-align: center;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="preloader">
+        <div id="ctn-preloader" class="ctn-preloader">
+            <div class="animation-preloader">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <main class="main__content_wrapper">
+        <section class="order-confirmation">
+            <div class="container">
+                <h2 class="order-title">Payment Successful</h2>
+                <div class="thank-you-message">
+                    Thank you, {{ request.user.first_name|default:'Customer' }}! Your payment was successful.
+                </div>
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="row mb-4">
+                    <div class="col-lg-6">
+                        <div class="order-info-card">
+                            <h3>Order Information</h3>
+                            <p><strong>Order Reference:</strong> {{ order.id }}</p>
+                            <p><strong>Total Amount:</strong> ₹{{ order.total_price|floatformat:2 }}</p>
+                            <p><strong>Payment Status:</strong> {{ order.payment_status|default:"Paid" }}</p>
+                            <p><strong>Date:</strong> {{ order.created_at|date:"F j, Y" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="next-steps-card">
+                            <h3>Next Steps</h3>
+                            <p>
+                                Thank you for choosing Suruchi. Your order has been received and is now being prepared for shipping.
+                                A confirmation email has been sent to your registered email address.
+                            </p>
+                            <div class="order-footer">
+                                {% if order.id %}
+                                    <a class="btn" href="{% url 'order_details' order.id %}">Order Details</a>
+                                    <a class="btn" href="{% url 'shop' %}">Continue Shopping</a>
+                                    <a class="btn btn-download" href="{% url 'generate_invoice' order.id %}">Download Invoice</a>
+                                {% else %}
+                                    <p class="text-danger">Error: Order ID not available.</p>
+                                    <a class="btn" href="{% url 'shop' %}">Continue Shopping</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <button id="scroll__top"><svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M112 244l144-144 144 144M256 120v292"/></svg></button>
+
+    <script src="{% static 'assets/js/vendor/popper.js' %}" defer="defer"></script>
+    <script src="{% static 'assets/js/vendor/bootstrap.min.js' %}" defer="defer"></script>
+    <script src="{% static 'assets/js/plugins/swiper-bundle.min.js' %}" defer></script>
+    <script src="{% static 'assets/js/plugins/glightbox.min.js' %}" defer></script>
+    <script src="{% static 'assets/js/script.js' %}" defer></script>
+</body>
+</html>
