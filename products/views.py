@@ -222,6 +222,7 @@ def shop(request):
     Categories = categories.objects.filter(is_listed=True)
     return render(request, 'shop_grid.html', {
         'products': page_obj,
+        'page_obj': page_obj,
         'categories': Categories,
     })
 
