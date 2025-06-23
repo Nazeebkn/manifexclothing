@@ -27,7 +27,8 @@ SECRET_KEY = 'django-insecure-^ar4-v_)2@g#8!59)7jb545n6r#xm$bnc42pd-m(^&#(c)1a=$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS =['manifexclothing.ddns.net', '127.0.0.1', '13.60.214.75']
+
 
 
 # Application definition
@@ -148,7 +149,7 @@ DATABASES = {
 }
 
 
-SITE_ID = 2
+SITE_ID = 1
 
 
 # Password validation
@@ -190,7 +191,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
-# STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -214,10 +215,10 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 
 
 SOCIALACCOUNT_PROVIDERS = {
-    'Google': {
+    'google': {
         'APP': {
-            'client_id': '',
-            'secret': '',
+            'client_id': '978179910341-vnijed352u2ms37lt27sf2c34h5k05d3.apps.googleusercontent.com',
+            'secret': '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',
             'key': ''
         },
         'SCOPE': ['profile', 'email'],
@@ -239,3 +240,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Media files (user-uploaded content)
 MEDIA_URL = '/media/'  # URL to access media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+SOCIALACCOUNT_ADAPTER = 'project.custom_adapter.CustomSocialAccountAdapter'

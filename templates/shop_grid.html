@@ -159,7 +159,13 @@
                                                 <div class="product__items">
                                                     <div class="product__items--thumbnail">
                                                         <a class="product__items--link" href="{% url 'product_details' product.id %}">
-                                                            <img class="product_items--img product_primary--img" src="{{product.product.image.url}}" alt="{{ product.name }}">
+                                                            {% if product.product.image and product.product.image.url %}
+								    <img src="{{ product.product.image.url }}">
+							    {% else %}
+  							            <img src="{% static 'default.jpg' %}">
+							    {% endif %}
+
+									
                                                         </a>
                                                         <div class="product__badge">
                                                             <span class="product__badge--items sale">Sale</span>
