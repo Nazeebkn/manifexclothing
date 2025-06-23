@@ -89221,3 +89221,8 @@ Not Found: /actuator/health
 Forbidden (Referer checking failed - no Referer.): /
 Not Found: /boaform/admin/formLogin
 Not Found: /whoAmI/
+Watching for file changes with StatReloader
+Not Found: /shop/assets/img/favicon.ico
+Watching for file changes with StatReloader
+C:\Users\nasee\OneDrive\Desktop\BROTOTYPE\week 9\Project\project\products\views.py changed, reloading.
+Watching for file changes with StatReloader
