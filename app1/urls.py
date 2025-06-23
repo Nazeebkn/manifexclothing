@@ -19,8 +19,7 @@ urlpatterns = [
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('reset-password/<str:email>/', views.reset_password, name='reset_password'),
     path('logout/', LogoutView.as_view(next_page='index'), name='logout'),
-    path('', include('social_django.urls', namespace='social')),
-    path('', views.index, name='index'),
+    path('auth/', include('social_django.urls', namespace='social')),
     path('password_otp',views.password_verify_otp,name="password_otp"),
 
 

@@ -20,7 +20,7 @@ from categories.models import categories
 from products.models import Product,ProductVariant
 from .models import Referral
 from wallet.models import Wallet, WalletTransaction
-
+from django.views.decorators.cache import never_cache
 
 
 
@@ -28,11 +28,14 @@ from wallet.models import Wallet, WalletTransaction
 
 
 # Generate 4-digit OTP
+
+@never_cache
 def generate_otp():
-    print(f"your OTP is {otp}")
-    return str(secrets.randbelow(10000)).zfill(4)
+    otp = random.randint(0, 9999)
+    return str(otp).zfill(4)
 
 # Send OTP to email
+
 def send_otp_email(email, otp):
     subject = "Your OTP Code"
     message = f"Your OTP Code is: {otp}"
@@ -59,6 +62,7 @@ def validate_password(password):
     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
         return False, "Password must contain at least one special character."
     return True, ""
+
 
 def register(request):
    

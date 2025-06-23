@@ -7,8 +7,10 @@ cryptography==44.0.2
 defusedxml==0.7.1
 Django==5.2
 django-allauth==65.7.0
+et_xmlfile==2.0.0
 idna==3.10
 oauthlib==3.2.2
+openpyxl==3.1.5
 pillow==11.2.1
 psycopg2==2.9.10
 psycopg2-binary==2.9.10

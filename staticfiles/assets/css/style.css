@@ -10921,7 +10921,7 @@ details > summary::-webkit-details-marker {
   }
 }
 
-* {
+/* * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -11063,4 +11063,4 @@ button:hover {
   p {
       font-size: 14px;
   }
-}
+} */

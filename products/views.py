@@ -116,7 +116,6 @@ def edit_product(request, product_id):
 
 
 def product_details(request, variant_id):
-    print(f"Fetching variant with ID: {variant_id}")
     variant = get_object_or_404(ProductVariant, id=variant_id)
     variants = ProductVariant.objects.filter(product=variant.product)
     sizes = Size.objects.filter(variant=variant)
@@ -185,12 +184,28 @@ def shop(request):
     .values_list('id', flat=True)
 )
     products = ProductVariant.objects.filter(id__in=variant_ids).select_related('product')
-    print(products)
-    user=User.objects.get(id=request.user.id)
-    print("hi",user.email)
+
+    try:
+        print("User is authenticated:", request.user.is_authenticated)
+        if request.user.is_authenticated:
+            user = request.user
+            print("User object accessed:", user)
+        else:
+            print("User not authenticated")
+            user = None
+    except Exception as e:
+        print("User error:", e)
+        user = None
+
 
     for i in products:
-        print(i.product.name)
+        try:
+            print(f"Checking image for product variant {i.id}")
+            _ = i.product.image.path  # This will try to access the image
+        except Exception as e:
+            print(f"Error in product: {i.id}, error: {e}")
+            continue
+
 
     category_id = request.GET.get('category')
     if category_id:
