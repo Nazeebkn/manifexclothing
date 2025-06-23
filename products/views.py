@@ -230,7 +230,7 @@ def shop(request):
     else:
         products = products.order_by('product__name') 
 
-    paginator = Paginator(products, 12) 
+    paginator = Paginator(products, 6) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
