@@ -58,7 +58,143 @@
     display: block;
     object-fit: cover;
 }
+/* Visually hidden class for accessibility */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
 
+/* Style for the size select dropdown */
+.size_select {
+    padding: 4px 8px;
+    border: 1px solid #333;
+    border-radius: 2px;
+    background: transparent;
+    font-size: 0.85rem;
+    color: #333;
+    margin-right: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.size_select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+/* Style for the action buttons (Add to Cart and Wishlist) */
+.product_items--action_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    background: transparent;
+    border: 1px solid #333;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.product_items--action_btn:hover {
+    border-color: #007bff;
+    transform: scale(1.03);
+}
+
+.product_items--action_btn:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+/* SVG icon styles */
+.product_items--action_btn--svg {
+    width: 16px;
+    height: 16px;
+    fill: #333;
+    transition: fill 0.2s ease;
+}
+
+.product_items--action_btn:hover .product_items--action_btn--svg {
+    fill: #007bff;
+}
+
+/* Ensure buttons and dropdowns are aligned properly */
+.product__items--action {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.product_items--action_list {
+    display: flex;
+    align-items: center;
+}
+
+/* Responsive adjustments for buttons and dropdown */
+@media (max-width: 767px) {
+    .size_select {
+        padding: 3px 6px;
+        font-size: 0.8rem;
+    }
+
+    .product_items--action_btn {
+        padding: 3px 6px;
+    }
+
+    .product_items--action_btn--svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .product__items--action {
+        gap: 4px;
+    }
+}
+
+/* Existing styles (unchanged) */
+@media (min-width: 768px) {
+    .col {
+        flex: 0 0 33.333333% !important;
+        max-width: 33.333333% !important;
+    }
+}
+@media (min-width: 992px) {
+    .col {
+        flex: 0 0 25% !important;
+        max-width: 25% !important;
+    }
+}
+@media (min-width: 1200px) {
+    .col {
+        flex: 0 0 20% !important;
+        max-width: 20% !important;
+    }
+}
+.product__items:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.product__items:hover .product__items--img {
+    transform: scale(1.05);
+}
+.product__items--content h3 a:hover {
+    color: #007bff;
+}
+@media (max-width: 767px) {
+    .section__heading h2 {
+        font-size: 1.5rem !important;
+    }
+    .product__items--content h3 {
+        font-size: 1rem !important;
+    }
+    .product__items--price {
+        font-size: 1rem !important;
+    }
+}
 
   </style>
 
