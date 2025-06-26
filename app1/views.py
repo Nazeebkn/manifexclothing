@@ -29,10 +29,10 @@ from django.views.decorators.cache import never_cache
 
 # Generate 4-digit OTP
 
-@never_cache
-def generate_otp():
-    otp = random.randint(0, 9999)
-    return str(otp).zfill(4)
+# @never_cache
+# def generate_otp():
+#     otp = random.randint(0, 9999)
+#     return str(otp).zfill(4)
 
 # Send OTP to email
 
@@ -135,8 +135,8 @@ def register(request):
 
         
 
-
-        otp = generate_otp()   
+        otp = random.randint(0, 9999)
+        # otp = generate_otp()   
         expires_at = django_timezone.now() + timedelta(minutes=1)
 
         request.session['otp'] = otp
