@@ -304,8 +304,8 @@ def resend_otp(request):
         otp_expires_at = request.session.get('otp_expires_at')
 
             
-
-        new_otp = generate_otp()
+        new_otp = random.randint(0, 9999)
+        # new_otp = generate_otp()
         print(new_otp)
         expires_at = django_timezone.now() + timedelta(minutes=1)
         request.session['otp'] = new_otp
