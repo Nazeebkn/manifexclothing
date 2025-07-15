@@ -13,7 +13,7 @@ import json
 # Add to Cart
 logger = logging.getLogger(__name__)
 
-@login_required
+@login_required(login_url='login')
 def add_to_cart(request, variant_id):
     variant = get_object_or_404(ProductVariant, id=variant_id, product__is_active=True)
 
