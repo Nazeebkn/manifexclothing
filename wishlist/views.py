@@ -94,7 +94,7 @@ def remove_from_wishlist(request, wishlist_item_id):
 
 
 
-@login_required
+@login_required(login_url='login')
 def add_to_wishlist(request,product_id):
 
     if request.method == 'POST':
