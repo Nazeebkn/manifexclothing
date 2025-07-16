@@ -149,7 +149,7 @@ DATABASES = {
 }
 
 
-SITE_ID = 4
+SITE_ID = int(config('SITE_ID'))
 
 
 # Password validation
