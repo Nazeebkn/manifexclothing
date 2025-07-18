@@ -35,7 +35,7 @@ from django.views.decorators.cache import never_cache
 #     return str(otp).zfill(4)
 
 # Send OTP to email
-
+ 
 def send_otp_email(email, otp):
     subject = "Your OTP Code"
     message = f"Your OTP Code is: {otp}"
@@ -158,7 +158,7 @@ def register(request):
 
 
 
-
+@never_cache
 def verify_otp(request):
 
     email = request.session.get('email')
@@ -317,7 +317,7 @@ def resend_otp(request):
             return JsonResponse({'success': False, 'message': 'Failed to send OTP. Please try again.'})
     
 
-
+@never_cache
 def login_user(request):
 
     if request.method == 'POST':

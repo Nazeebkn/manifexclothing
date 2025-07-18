@@ -137,7 +137,8 @@ cursor: pointer;
         <!-- Start login section  -->
         <div class="login__section section--padding">
             <div class="container">
-                <form action="{% url 'login'%}" method="post">
+                <form action="{% url 'login'%}" method="post" autocomplete="off">
+
                     {% csrf_token %}
                     <div class="login__section--inner">
                         <div class="row row-cols-md-2 row-cols-1">
@@ -148,8 +149,9 @@ cursor: pointer;
                                         <p class="account__login--header__desc">Login if you area a returning customer.</p>
                                     </div>
                                     <div class="account__login--inner">
-                                        <input class="account__login--input" name="username" placeholder="Email Addres" type="text">
-                                        <input class="account__login--input" name="password" placeholder="Password" type="password">
+                                        <input class="account__login--input" name="username" placeholder="Email Address" type="text" autocomplete="off">
+                                        <input class="account__login--input" name="password" placeholder="Password" type="password" autocomplete="off">
+
                                         <div class="account__login--remember__forgot mb-15 d-flex justify-content-between align-items-center">
                                             <div class="account__login--remember position__relative">
                                                 <input class="checkout__checkbox--input" id="check1" type="checkbox">

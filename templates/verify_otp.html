@@ -107,7 +107,7 @@
                 </div>
             {% endif %}
             
-            <form id="verify-otp-form" method="post" action="{% url 'password_otp'%}">
+            <form id="verify-otp-form" method="post" action="{% url 'password_otp'%}" >
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="otp">OTP</label>

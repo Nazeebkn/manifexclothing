@@ -89,7 +89,7 @@
                 {% endfor %}
             </div>
         {% endif %}
-        <form method="POST" action="{% url 'verify_otp' %}">
+        <form method="POST" action="{% url 'verify_otp' %}" autocomplete="off" >
             {% csrf_token %}
             <div class="otp-inputs">
                 <input type="text" name="otp_1" maxlength="1" required>
