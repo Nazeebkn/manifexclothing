@@ -1,1 +1,35 @@
-debug.log 
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+env/
+venv/
+
+# Django-specific
+*.log
+db.sqlite3
+media/
+staticfiles/
+.env
+
+# VS Code
+.vscode/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+debug.log
+gunicorn.log
+nohup.out
+
+# Site config folders
+sites-enabled/
+
+# Migrations (optional)
+**/migrations/*.py
+**/migrations/*.pyc
+!*/migrations/__init__.py
