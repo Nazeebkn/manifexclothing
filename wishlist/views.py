@@ -2,16 +2,28 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Wishlist
-from products.models import Product, ProductVariant, Size  # Import from products app
-from cart.models import Cart, CartItem  # Import from cart app
+from products.models import Product, ProductVariant, Size  
+from cart.models import Cart, CartItem 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 @login_required
 def wishlist(request):
-    # Fetch wishlist items with related data to reduce queries
     wishlist_items = Wishlist.objects.filter(
         user=request.user,
         variant__product__is_active=True
-    )
+    ).order_by('-id')
+
+    items_per_page = 4
+    paginator = Paginator(wishlist_items, items_per_page)
+    page = request.GET.get('page')
+    
+    try:
+        wishlist_items_paginated = paginator.page(page)
+    except PageNotAnInteger:
+        wishlist_items_paginated = paginator.page(1)
+    except EmptyPage:
+        wishlist_items_paginated = paginator.page(paginator.num_pages)
 
 
     if request.method == 'POST':
@@ -37,7 +49,6 @@ def wishlist(request):
                 messages.error(request, "Variant or size not specified for this wishlist item.")
                 return redirect('wishlist')
 
-            # Check stock with edge case handling
             if not size.stock or size.stock <= 0:
                 messages.error(request, f"Size {size.size} is out of stock for {variant.product.name} ({variant.color}).")
                 return redirect('wishlist')
@@ -60,11 +71,9 @@ def wishlist(request):
             messages.success(request, f"{variant.product.name} moved to your cart.")
             return redirect('cart')
 
-    # wishlist_count = wishlist_items.count()
 
     context = {
-        'wishlist_items': wishlist_items,
-        # 'wishlist_count': wishlist_count,
+        'wishlist_items': wishlist_items_paginated,
     }
     return render(request, 'wishlist.html', context)
 
