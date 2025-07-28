@@ -201,7 +201,7 @@ def shop(request):
     for i in products:
         try:
             print(f"Checking image for product variant {i.id}")
-            _ = i.product.image.path  # This will try to access the image
+            _ = i.product.image.path  
         except Exception as e:
             print(f"Error in product: {i.id}, error: {e}")
             continue
@@ -210,6 +210,17 @@ def shop(request):
     category_id = request.GET.get('category')
     if category_id:
         products = products.filter(product__category__id=category_id)
+
+
+    price_range = request.GET.get('price_range')
+    if price_range:
+        try:
+            price_min, price_max = map(int, price_range.split('-'))
+            products = products.filter(product__price__gte=price_min, product__price__lte=price_max)
+        except ValueError:
+            print(f"Invalid price_range format: {price_range}")
+
+            
 
     price_min = request.GET.get('price_min')
     price_max = request.GET.get('price_max')

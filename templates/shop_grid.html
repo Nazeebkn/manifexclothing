@@ -18,6 +18,17 @@
 
   <!-- Custom Style CSS -->
   <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+
+  <style>
+    .product__price--filter {
+        margin-left: 20px;
+    }
+    .price__range--feedback {
+        margin-top: 5px;
+        font-size: 12px;
+        color: #dc3545; /* Red color for errors */
+    }
+  </style>
 </head>
 
 <body>
@@ -153,6 +164,19 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="product__view--mode__list product__price--filter align-items-center d-none d-lg-flex">
+                            <label class="product__view--label">Price Range :</label>
+                            <div class="select shop__header--select">
+                                <select id="price-range" class="product__view--select" onchange="filterByPrice()">
+                                    <option value="" {% if not request.GET.price_range %}selected{% endif %}>All Prices</option>
+                                    <option value="500-1000" {% if request.GET.price_range == "500-1000" %}selected{% endif %}>500 - 1000</option>
+                                    <option value="1000-2000" {% if request.GET.price_range == "1000-2000" %}selected{% endif %}>1000 - 2000</option>
+                                    <option value="2000-5000" {% if request.GET.price_range == "2000-5000" %}selected{% endif %}>2000 - 5000</option>
+                                    <option value="5000-10000" {% if request.GET.price_range == "5000-10000" %}selected{% endif %}>5000 - 10000</option>
+                                </select>
+                            </div>
+                            <div id="price-feedback" class="price__range--feedback"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -168,12 +192,10 @@
                                                     <div class="product__items--thumbnail">
                                                         <a class="product__items--link" href="{% url 'product_details' product.id %}">
                                                             {% if product.product.image and product.product.image.url %}
-								    <img src="{{ product.product.image.url }}">
-							    {% else %}
-  							            <img src="{% static 'default.jpg' %}">
-							    {% endif %}
-
-									
+                                                            <img src="{{ product.product.image.url }}">
+                                                            {% else %}
+                                                            <img src="{% static 'default.jpg' %}">
+                                                            {% endif %}
                                                         </a>
                                                         <div class="product__badge">
                                                             <span class="product__badge--items sale">Sale</span>
@@ -234,7 +256,7 @@
                                                 <ul class="pagination__wrapper d-flex align-items-center justify-content-center">
                                                     {% if page_obj.has_previous %}
                                                     <li class="pagination__list">
-                                                        <a href="?{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page_obj.previous_page_number }}" class="pagination__item--arrow link">
+                                                        <a href="?{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.price_range %}price_range={{ request.GET.price_range }}&{% endif %}{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page_obj.previous_page_number }}" class="pagination__item--arrow link">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="22.51" height="20.443" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M244 400L100 256l144-144M120 256h292"/></svg>
                                                             <span class="visually-hidden">pagination arrow</span>
                                                         </a>
@@ -244,12 +266,12 @@
                                                     {% if page_obj.number == num %}
                                                     <li class="pagination__list"><span class="pagination__item pagination__item--current">{{ num }}</span></li>
                                                     {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                                                    <li class="pagination__list"><a href="?{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ num }}" class="pagination__item link">{{ num }}</a></li>
+                                                    <li class="pagination__list"><a href="?{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.price_range %}price_range={{ request.GET.price_range }}&{% endif %}{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ num }}" class="pagination__item link">{{ num }}</a></li>
                                                     {% endif %}
                                                     {% endfor %}
                                                     {% if page_obj.has_next %}
                                                     <li class="pagination__list">
-                                                        <a href="?{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page_obj.next_page_number }}" class="pagination__item--arrow link">
+                                                        <a href="?{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.price_range %}price_range={{ request.GET.price_range }}&{% endif %}{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page_obj.next_page_number }}" class="pagination__item--arrow link">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="22.51" height="20.443" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M268 112l144 144-144 144M392 256H100"/></svg>
                                                             <span class="visually-hidden">pagination arrow</span>
                                                         </a>
@@ -400,6 +422,20 @@
                 url.searchParams.delete('category');
             } else {
                 url.searchParams.set('category', categoryValue);
+            }
+            url.searchParams.set('page', '1');
+            window.location.href = url.toString();
+        }
+
+        function filterByPrice() {
+            var priceRange = document.getElementById('price-range').value;
+            var feedback = document.getElementById('price-feedback');
+            var url = new URL(window.location.href);
+
+            if (priceRange === '') {
+                url.searchParams.delete('price_range');
+            } else {
+                url.searchParams.set('price_range', priceRange);
             }
             url.searchParams.set('page', '1');
             window.location.href = url.toString();
