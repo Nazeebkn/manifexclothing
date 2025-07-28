@@ -189,13 +189,15 @@ def shop(request):
         if request.user.is_authenticated:
             user = request.user
         else:
+            
             user = None
     except Exception as e:
-        user = None
+        pass
 
 
     for i in products:
         try:
+            
             _ = i.product.image.path  
         except Exception as e:
             continue
@@ -212,7 +214,7 @@ def shop(request):
             price_min, price_max = map(int, price_range.split('-'))
             products = products.filter(product__price__gte=price_min, product__price__lte=price_max)
         except ValueError:
-            print(f"Invalid price_range format: {price_range}")
+            pass
 
 
 
