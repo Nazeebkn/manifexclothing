@@ -78,25 +78,41 @@ def wishlist(request):
     return render(request, 'wishlist.html', context)
 
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import Wishlist
 
 @login_required
 def remove_from_wishlist(request, wishlist_item_id):
-    print("the method is being called")
-    wishlist_item = get_object_or_404(
-        Wishlist,
-        id=wishlist_item_id,
-        user=request.user
-    )
-
-    if request.method == 'POST':
-        print("the method is post")
-        wishlist_item.delete()
-        messages.success(request, f"{wishlist_item.variant.product.name} removed from your wishlist.")
+    print(f"remove_from_wishlist called with wishlist_item_id: {wishlist_item_id}")
+    try:
+        wishlist_item = get_object_or_404(
+            Wishlist,
+            id=wishlist_item_id,
+            user=request.user
+        )
+        print(f"Wishlist item found: id={wishlist_item.id}, user={wishlist_item.user.username}, product={wishlist_item.variant.product.name}, variant={wishlist_item.variant.color}, size={wishlist_item.size.size if wishlist_item.size else 'None'}")
+    except Exception as e:
+        print(f"Error finding wishlist item: {e}")
+        messages.error(request, "Wishlist item not found or does not belong to you.")
         return redirect('wishlist')
 
-    return redirect('wishlist')
-
-
+    if request.method == 'POST':
+        print("POST request received for removing wishlist item")
+        try:
+            product_name = wishlist_item.variant.product.name
+            wishlist_item.delete()
+            print(f"Successfully deleted wishlist item: {wishlist_item_id}")
+            messages.success(request, f"{product_name} has been removed from your wishlist.")
+        except Exception as e:
+            print(f"Error deleting wishlist item: {e}")
+            messages.error(request, "An error occurred while removing the item from your wishlist.")
+        return redirect('wishlist')
+    else:
+        print(f"Invalid request method: {request.method}")
+        messages.error(request, "Invalid request to remove item from wishlist.")
+        return redirect('wishlist')
 
 
 

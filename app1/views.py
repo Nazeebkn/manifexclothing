@@ -162,79 +162,53 @@ def register(request):
 
 @never_cache
 def verify_otp(request):
-
     email = request.session.get('email')
+    otp_expires_at = request.session.get('otp_expires_at')
 
     if request.method == 'POST':
         otp1 = request.POST.get('otp_1')
         otp2 = request.POST.get('otp_2')
         otp3 = request.POST.get('otp_3')
         otp4 = request.POST.get('otp_4')
-        entered_otp =otp1+otp2+otp3+otp4
+        entered_otp = otp1 + otp2 + otp3 + otp4
         
         otp = request.session.get('otp')
-        otp_expires_at = request.session.get('otp_expires_at') 
-        
-
 
         if not otp:
-            return render(request, 'otp.html', {'error': 'OTP not found.', 'email':email})
-
+            return render(request, 'otp.html', {'error': 'OTP not found.', 'email': email, 'otp_expires_at': otp_expires_at})
 
         try:
-            otp_expires_at = datetime.fromtimestamp(otp_expires_at, tz=datetime_timezone.utc)
-            
-            print(otp_expires_at)
+            otp_expires_at_dt = datetime.fromtimestamp(otp_expires_at, tz=datetime_timezone.utc)
         except ValueError:
-            return render(request, 'otp.html', {'error':'Invalid OTP expiration format.', 'email':email})
+            return render(request, 'otp.html', {'error': 'Invalid OTP expiration format.', 'email': email, 'otp_expires_at': otp_expires_at})
 
-
-        if django_timezone.now() > otp_expires_at:
-            print("haloo")
-            return render(request, 'otp.html', {'error': 'OTP has expired.', 'email': email})
-
-
+        if django_timezone.now() > otp_expires_at_dt:
+            return render(request, 'otp.html', {'error': 'OTP has expired.', 'email': email, 'otp_expires_at': otp_expires_at})
 
         if str(otp) == entered_otp:
-            print("otp")
             username = request.session['username']
             password = request.session['password']
             first_name = request.session['first_name']
             last_name = request.session['last_name']
-            referral_code = request.session.get('referral_code')  # Get referral code from session
+            referral_code = request.session.get('referral_code')
 
             user = User.objects.create_user(
-
                 username=username,
                 email=email,
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
-                
-                                              
             )
 
-
-
-
-
-
-            # Create a referral entry for the new user
             Referral.objects.create(user=user)
 
-            # Credit ₹50 to the new user's wallet
             wallet, _ = Wallet.objects.get_or_create(user=user)
-            #WalletTransaction.objects.create()
 
-            # Handle referral code
             if referral_code:
-                    
-                # try:
                 referral = Referral.objects.get(referral_code=referral_code)
                 referred_by = referral.user
                 Referral.objects.filter(user=user).update(referred_by=referred_by)
-
-                # wallet, _ = Wallet.objects.get_or_create(user=user)
+                
                 wallet.balance += 50
                 wallet.save()
                 WalletTransaction.objects.create(
@@ -244,7 +218,6 @@ def verify_otp(request):
                     description='Referral bonus for new user'
                 )
 
-                # Credit ₹100 to the referred user's wallet
                 referred_wallet, _ = Wallet.objects.get_or_create(user=referred_by)
                 referred_wallet.balance += 100
                 referred_wallet.save()
@@ -254,24 +227,15 @@ def verify_otp(request):
                     transaction_type='credit',
                     description='Referral bonus for referring user'
                 )
-        #         except Referral.DoesNotExist:
-        #             pass
 
-
-
-
-
-
-            
             request.session.clear()
-            messages.success(request, 'Signup Successfull')
+            messages.success(request, 'Signup Successful')
             return redirect('login')
         
         else:
-            return render(request, 'otp.html', {'error': 'Invalid OTP. Please try again.', 'email':email})
+            return render(request, 'otp.html', {'error': 'Invalid OTP. Please try again.', 'email': email, 'otp_expires_at': otp_expires_at})
 
-
-    return render(request, 'otp.html', {'email':email})
+    return render(request, 'otp.html', {'email': email, 'otp_expires_at': otp_expires_at})
 
 # reset password
 

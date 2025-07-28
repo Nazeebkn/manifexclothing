@@ -1,11 +1,10 @@
-
 {% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta namerobot: noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OTP Verification</title>
     <style>
@@ -61,6 +60,10 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .verify-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
         .resend {
             margin-top: 10px;
             color: #007bff;
@@ -76,12 +79,18 @@
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
+        #timer {
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="otp-container">
         <h2>OTP Verification</h2>
         <p>Enter the 4-digit code sent to your email: {{ email }}</p>
+        <div id="timer">Time remaining: 1:00</div>
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
@@ -89,18 +98,17 @@
                 {% endfor %}
             </div>
         {% endif %}
-        <form method="POST" action="{% url 'verify_otp' %}" autocomplete="off" >
+        <form method="POST" action="{% url 'verify_otp' %}" autocomplete="off" id="otp-form">
             {% csrf_token %}
             <div class="otp-inputs">
                 <input type="text" name="otp_1" maxlength="1" required>
                 <input type="text" name="otp_2" maxlength="1" required>
                 <input type="text" name="otp_3" maxlength="1" required>
                 <input type="text" name="otp_4" maxlength="1" required>
-
             </div>
-            <button type="submit" class="verify-btn">Verify OTP</button>
+            <button type="submit" class="verify-btn" id="verify-btn">Verify OTP</button>
         </form>
-        <a href="{% url 'resend_otp' %}" class="resend">Resend OTP</a>
+        <a href="{% url 'resend_otp' %}" class="resend" id="resend-link">Resend OTP</a>
     </div>
 
     <script>
@@ -117,6 +125,44 @@
                 }
             });
         });
+
+        // Timer logic
+        const expiresAt = {{ otp_expires_at|default:0 }} * 1000; // Convert to milliseconds
+        const timerDisplay = document.getElementById('timer');
+        const verifyBtn = document.getElementById('verify-btn');
+        const resendLink = document.getElementById('resend-link');
+        const form = document.getElementById('otp-form');
+
+        function updateTimer() {
+            const now = Date.now();
+            const timeLeft = expiresAt - now;
+
+            if (timeLeft <= 0) {
+                timerDisplay.textContent = 'OTP has expired';
+                verifyBtn.disabled = true;
+                resendLink.style.pointerEvents = 'auto';
+                resendLink.style.opacity = '1';
+                clearInterval(timerInterval);
+            } else {
+                const seconds = Math.floor(timeLeft / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                timerDisplay.textContent = `Time remaining: ${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+                verifyBtn.disabled = false;
+                resendLink.style.pointerEvents = 'none';
+                resendLink.style.opacity = '0.5';
+            }
+        }
+
+        if (expiresAt) {
+            const timerInterval = setInterval(updateTimer, 1000);
+            updateTimer(); // Initial call to avoid 1-second delay
+        } else {
+            timerDisplay.textContent = 'OTP not available';
+            verifyBtn.disabled = true;
+            resendLink.style.pointerEvents = 'auto';
+            resendLink.style.opacity = '1';
+        }
     </script>
 </body>
 </html>
