@@ -186,24 +186,18 @@ def shop(request):
     products = ProductVariant.objects.filter(id__in=variant_ids).select_related('product')
 
     try:
-        print("User is authenticated:", request.user.is_authenticated)
         if request.user.is_authenticated:
             user = request.user
-            print("User object accessed:", user)
         else:
-            print("User not authenticated")
             user = None
     except Exception as e:
-        print("User error:", e)
         user = None
 
 
     for i in products:
         try:
-            print(f"Checking image for product variant {i.id}")
             _ = i.product.image.path  
         except Exception as e:
-            print(f"Error in product: {i.id}, error: {e}")
             continue
 
 
@@ -220,7 +214,7 @@ def shop(request):
         except ValueError:
             print(f"Invalid price_range format: {price_range}")
 
-            
+
 
     price_min = request.GET.get('price_min')
     price_max = request.GET.get('price_max')
