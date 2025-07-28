@@ -134,8 +134,6 @@ def register(request):
 
 
         
-        print("Form passed validation, generating OTP...")
-        otp = random.randint(0, 9999)
         print(f"Your sending OTP is {otp}")
 
         # otp = generate_otp()   
