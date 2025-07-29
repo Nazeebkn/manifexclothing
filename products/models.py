@@ -2,7 +2,7 @@ from django.db import models
 from categories.models import categories
 from django.db.models.signals import pre_save,post_save,post_delete
 from django.dispatch import receiver    
-
+from django.contrib.auth.models import User
 # Create your models here.
 
 class Product(models.Model):
@@ -46,3 +46,15 @@ class Size(models.Model):
     def __str__(self):
         return self.size
 
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])  # 1 to 5 stars
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('product', 'user')  # One review per user per product
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name} - {self.rating} stars"

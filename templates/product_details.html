@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="{% static 'assets/css/vendor/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
   <style>
-    /* Existing styles for images and navigation */
+    /* Existing styles unchanged */
     .zoom-container {
       position: relative;
       overflow: hidden;
@@ -68,7 +68,6 @@
       color: #fff;
     }
 
-    /* Styles for product details info */
     .product__details--info {
       padding: 20px;
       background: #fff;
@@ -118,7 +117,6 @@
       font-family: 'Jost', sans-serif;
     }
 
-    /* Styles for offer display */
     .offer__badge {
       display: inline-block;
       background: linear-gradient(90deg, #e74c3c, #c0392b);
@@ -181,7 +179,6 @@
       margin-bottom: 5px;
     }
 
-    /* Styles for description, variants, and reviews */
     .product__details--info__desc__wrapper {
       border: 2px solid #ddd;
       border-radius: 6px;
@@ -250,7 +247,7 @@
     }
 
     .variant__option--size:hover {
-      bordercolor: #007bff;
+      border-color: #007bff;
       background: #f0f7ff;
     }
 
@@ -344,7 +341,7 @@
       transform: translateY(-2px);
     }
 
-    /* Review section styles */
+    /* Review Section Styles */
     .review__section {
       margin-top: 20px;
     }
@@ -366,6 +363,19 @@
       position: absolute;
       bottom: -5px;
       left: 0;
+    }
+
+    .average__rating {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 15px;
+      font-family: 'Jost', sans-serif;
+    }
+
+    .average__rating .star {
+      color: #f1c40f;
+      margin-right: 3px;
     }
 
     .review__grid {
@@ -418,6 +428,70 @@
       color: #4a4a4a;
       line-height: 1.4;
       font-family: 'Jost', sans-serif;
+    }
+
+    .review__form {
+      margin-top: 20px;
+      background: #fff;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .review__form h4 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      font-family: 'Jost', sans-serif;
+      margin-bottom: 15px;
+    }
+
+    .rating__stars {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+
+    .rating__star {
+      font-size: 1.5rem;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .rating__star.filled {
+      color: #f1c40f;
+    }
+
+    .rating__star:hover {
+      color: #f1c40f;
+    }
+
+    .review__form textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.9rem;
+      resize: vertical;
+      margin-bottom: 10px;
+    }
+
+    .review__form button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-family: 'Jost', sans-serif;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .review__form button:hover {
+      background: #0056b3;
     }
 
     /* Responsive adjustments */
@@ -508,9 +582,25 @@
       .review__comment {
         font-size: 0.85rem;
       }
+
+      .review__form h4 {
+        font-size: 1.2rem;
+      }
+
+      .rating__star {
+        font-size: 1.2rem;
+      }
+
+      .review__form textarea {
+        font-size: 0.85rem;
+      }
+
+      .review__form button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+      }
     }
 
-    /* Alert styles */
     .alert__messages {
       margin-bottom: 20px;
     }
@@ -575,7 +665,6 @@
           </div>
           <div class="header__account header__sticky--none">
             <ul class="d-flex">
-
               {% if user.is_authenticated %}
               <li class="header__account--items">
                 <a class="header__account--btn" href="{% url 'my_profile' %}">
@@ -587,7 +676,6 @@
                 </a>
               </li>
               {% endif %}
-
               {% if user.is_authenticated %}
               <li class="header__account--items d-none d-lg-block">
                 <a class="header__account--btn" href="{% url 'wishlist' %}">
@@ -598,7 +686,6 @@
                 </a>
               </li>
               {% endif %}
-
               {% if user.is_authenticated %}
               <li class="header__account--items">
                 <a class="header__account--btn minicart__open--btn" href="{% url 'cart' %}" data-offcanvas>
@@ -851,35 +938,57 @@
                 <a href="{% url 'add_to_wishlist' product.id %}" class="action__btn add-to-wishlist">Add to Wishlist</a>
                 {% endif %}
               </div>
-              <!-- Review section -->
+              <!-- Review Section -->
               <div class="review__section">
                 <h3>Customer Reviews</h3>
-                <div class="review__grid">  
-                  <div class="review__card">
-                    <div class="review__rating">
-                      <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">☆</span>
-                    </div>
-                    <div class="review__author">John Doe</div>
-                    <div class="review__date">April 15, 2025</div>
-                    <p class="review__comment">Great product, super quality! Shipping was a bit slow, but worth it.</p>
-                  </div>
-                  <div class="review__card">
-                    <div class="review__rating">
-                      <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-                    </div>
-                    <div class="review__author">Sarah Smith</div>
-                    <div class="review__date">April 10, 2025</div>
-                    <p class="review__comment">Absolutely love it! Stylish and comfy, best buy ever!</p>
-                  </div>
-                  <div class="review__card">
-                    <div class="review__rating">
-                      <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">☆</span><span class="star">☆</span>
-                    </div>
-                    <div class="review__author">Mike Johnson</div>
-                    <div class="review__date">April 5, 2025</div>
-                    <p class="review__comment">Okay product, but material could be better for the price.</p>
-                  </div>
+                {% if reviews %}
+                <div class="average__rating">
+                  Average Rating: 
+                  {% for i in "12345" %}
+                  <span class="star {% if i|add:0 <= average_rating|add:0 %}filled{% endif %}">★</span>
+                  {% endfor %}
+                  ({{ average_rating|floatformat:1 }} / 5 from {{ reviews.count }} reviews)
                 </div>
+                <div class="review__grid">
+                  {% for review in reviews %}
+                  <div class="review__card">
+                    <div class="review__rating">
+                      {% for i in "12345" %}
+                      <span class="star {% if i|add:0 <= review.rating %}filled{% endif %}">★</span>
+                      {% endfor %}
+                    </div>
+                    <div class="review__author">{{ review.user.username }}</div>
+                    <div class="review__date">{{ review.created_at|date:"F d, Y" }}</div>
+                    <p class="review__comment">{{ review.comment|default:"No comment provided." }}</p>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% else %}
+                <p style="font-size: 1rem; color: #777; font-family: 'Jost', sans-serif;">No reviews yet. Be the first to review this product!</p>
+                {% endif %}
+                <!-- Review Submission Form -->
+                {% if user.is_authenticated %}
+                <div class="review__form">
+                  <h4>Submit Your Review</h4>
+                  <form action="{% url 'product_details' product.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="rating__stars" id="rating-stars">
+                      <input type="hidden" name="rating" id="rating-value" value="0">
+                      <span class="rating__star" data-value="1">★</span>
+                      <span class="rating__star" data-value="2">★</span>
+                      <span class="rating__star" data-value="3">★</span>
+                      <span class="rating__star" data-value="4">★</span>
+                      <span class="rating__star" data-value="5">★</span>
+                    </div>
+                    <textarea name="comment" placeholder="Write your review here..." rows="4"></textarea>
+                    <button type="submit">Submit Review</button>
+                  </form>
+                </div>
+                {% else %}
+                <p style="font-size: 1rem; color: #777; font-family: 'Jost', sans-serif;">
+                  <a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to submit a review.
+                </p>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -1025,6 +1134,59 @@
         img.style.transformOrigin = 'center center';
       });
     });
+
+    // Rating stars interaction
+    const ratingStars = document.querySelectorAll('#rating-stars .rating__star');
+    const ratingInput = document.getElementById('rating-value');
+
+    // Function to update star display based on current rating
+    function updateStarDisplay(value) {
+      ratingStars.forEach(star => {
+        star.classList.remove('filled');
+        if (parseInt(star.getAttribute('data-value')) <= value) {
+          star.classList.add('filled');
+        }
+      });
+    }
+
+    // Initialize star display
+    updateStarDisplay(parseInt(ratingInput.value));
+
+    // Click event to set rating
+    ratingStars.forEach(star => {
+      star.addEventListener('click', () => {
+        const value = parseInt(star.getAttribute('data-value'));
+        ratingInput.value = value;
+        updateStarDisplay(value);
+      });
+
+      // Hover effect
+      star.addEventListener('mouseover', () => {
+        const value = parseInt(star.getAttribute('data-value'));
+        ratingStars.forEach(s => {
+          s.classList.remove('filled');
+          if (parseInt(s.getAttribute('data-value')) <= value) {
+            s.classList.add('filled');
+          }
+        });
+      });
+
+      // Reset to selected rating on mouseout
+      star.addEventListener('mouseout', () => {
+        updateStarDisplay(parseInt(ratingInput.value));
+      });
+    });
+
+    // Validate review form submission
+    const reviewForm = document.querySelector('.review__form form');
+    if (reviewForm) {
+      reviewForm.addEventListener('submit', (e) => {
+        if (!ratingInput.value || ratingInput.value == '0') {
+          e.preventDefault();
+          alert('Please select a rating.');
+        }
+      });
+    }
   });
   </script>
 </body>

@@ -595,7 +595,7 @@
                                 <div class="product__items--content">
                                     <span class="product_items--content_subtitle"><strong>{{ product.product.category.name }}</strong></span>
                                     <h3 class="product_items--content_title h4"><a href="{% url 'product_details' product.product.id %}">{{ product.product.name }}</a></h3>
-                                    <ul class="rating product__rating d-flex">
+                                    <!-- <ul class="rating product__rating d-flex">
                                         <li class="rating__list">
                                             <span class="rating__list--icon">
                                                 <svg class="rating_list--icon_svg" xmlns="http://www.w3.org/2000/svg" width="14.105" height="14.732" viewBox="0 0 10.105 9.732">
@@ -631,7 +631,7 @@
                                                 </svg>
                                             </span>
                                         </li>
-                                    </ul>
+                                    </ul> -->
                                     <ul class="product__items--action d-flex">
                                         <li class="product_items--action_list">
                                             <form action="{% url 'add_to_cart' product.id %}" method="POST">

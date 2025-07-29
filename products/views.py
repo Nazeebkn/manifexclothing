@@ -13,8 +13,11 @@ from django.contrib.auth.models import User
 from products.models import Size
 from django.utils import timezone
 from decimal import Decimal, ROUND_HALF_UP
-from products.models import Product, ProductVariant, Size
+from products.models import Product, ProductVariant, Size, Review
 from offer.models import ProductOffer, CategoryOffer
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.db.models import Avg
 
 @staff_member_required
 @never_cache
@@ -47,7 +50,6 @@ def product_list(request):
 @staff_member_required
 def toggle_product_status(request, product_id):
     if request.method == 'POST':
-        print("hello")
         product = get_object_or_404(Product, id=product_id)
         product.is_active = not product.is_active
         product.save()
@@ -113,34 +115,26 @@ def edit_product(request, product_id):
 
 
 
-
-
 def product_details(request, variant_id):
     variant = get_object_or_404(ProductVariant, id=variant_id)
     variants = ProductVariant.objects.filter(product=variant.product)
     sizes = Size.objects.filter(variant=variant)
     
-    current_datetime = timezone.now() 
-    print(f"Current datetime: {current_datetime}")
+    current_datetime = timezone.now()
     
-
     product_offer = ProductOffer.objects.filter(
         product=variant.product,
         is_active=True,
         valid_from__lte=current_datetime,
         valid_until__gte=current_datetime
     ).exclude(status='expired').first()
-    print(f"Product Offer: {product_offer}")
     
-
-
     category_offer = CategoryOffer.objects.filter(
         category=variant.product.category,
         is_active=True,
         valid_from__lte=current_datetime,
         valid_until__gte=current_datetime
     ).exclude(status='expired').first()
-    print(f"Category Offer: {category_offer}")
 
     original_price = variant.product.price
     discounted_price = original_price
@@ -160,7 +154,36 @@ def product_details(request, variant_id):
             discounted_price = category_discounted_price
             applied_discount = category_offer.discount_percentage
 
-    print(f"Original Price: {original_price}, Discounted Price: {discounted_price}, Applied Discount: {applied_discount}%")
+    # Fetch reviews and calculate average rating
+    reviews = variant.product.reviews.all()
+    average_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+    average_rating = round(average_rating, 1)
+
+    if request.method == 'POST' and 'rating' in request.POST:
+        if not request.user.is_authenticated:
+            messages.error(request, "You must be logged in to submit a review.")
+            return HttpResponseRedirect(reverse('product_details', args=[variant_id]))
+        
+        rating = int(request.POST.get('rating'))
+        comment = request.POST.get('comment', '')
+        
+        if 1 <= rating <= 5:
+            review, created = Review.objects.get_or_create(
+                product=variant.product,
+                user=request.user,
+                defaults={'rating': rating, 'comment': comment}
+            )
+            if not created:
+                review.rating = rating
+                review.comment = comment
+                review.save()
+                messages.success(request, "Your review has been updated.")
+            else:
+                messages.success(request, "Your review has been submitted.")
+        else:
+            messages.error(request, "Invalid rating value.")
+        
+        return HttpResponseRedirect(reverse('product_details', args=[variant_id]))
 
     return render(request, 'product_details.html', {
         'product': variant,
@@ -171,8 +194,9 @@ def product_details(request, variant_id):
         'original_price': original_price,
         'discounted_price': discounted_price,
         'applied_discount': applied_discount,
+        'reviews': reviews,
+        'average_rating': average_rating,
     })
-
 
 
 def shop(request):

@@ -18,7 +18,7 @@ from django.db import transaction
 from coupon.models import Coupon, CouponUsage
 import razorpay
 from django.conf import settings
-
+from decimal import Decimal
 
 
 razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
@@ -373,32 +373,86 @@ def generate_invoice(request, order_id):
 
 
 
+                                   
+
+
 @login_required
 def cancel_product(request, item_id):
     item = get_object_or_404(OrderItem, id=item_id, order__user=request.user)
-    print(f"Item ID: {item.id}, Status: {item.status}") 
+    print(f"Item ID: {item.id}, Status: {item.status}, Can cancel: {item.can_update_status('canceled')}") 
     
+    if item.status == 'canceled':
+        messages.error(request, "This product has already been canceled.")
+        return redirect('order_details', order_id=item.order.id)
+
     if not item.can_update_status('canceled'):
-        messages.error(request, "This product cannot be canceled at this time.")
-        print("Cannot cancel - Redirecting to order details")
+        messages.error(request, f"This product cannot be canceled because it is in '{item.status}' status.")
         return redirect('order_details', order_id=item.order.id)
 
     if request.method == 'POST':
+        print("POST request received")
+        print(f"Form data: {request.POST}")
         cancel_reason = request.POST.get('cancel_reason')
-        if item.can_update_status('canceled'):
-            item.status = 'canceled'
-            item.cancel_reason = cancel_reason
-            item.save()
-            messages.success(request, f"Product has been canceled.")
-        else:
-            messages.error(request, "This product cannot be canceled at this time.")
+        if not cancel_reason:
+            print("No cancel reason provided")
+            messages.error(request, "Please provide a cancellation reason.")
+            return redirect('order_details', order_id=item.order.id)
+
+        try:
+            with transaction.atomic():
+                # Update OrderItem
+                item.status = 'canceled'
+                item.cancel_reason = cancel_reason
+                item.save()
+                print(f"OrderItem updated: Status={item.status}, Cancel reason={item.cancel_reason}")
+
+                # Validate refund amount
+                if not item.price or not item.quantity or item.price <= 0 or item.quantity <= 0:
+                    print(f"Invalid price or quantity: Price={item.price}, Quantity={item.quantity}")
+                    messages.error(request, "Cannot process refund due to invalid price or quantity.")
+                    return redirect('order_details', order_id=item.order.id)
+                
+                refund_amount = Decimal(str(item.price)) * Decimal(str(item.quantity))
+                if refund_amount <= 0:
+                    print(f"Invalid refund amount: {refund_amount}")
+                    messages.error(request, "Cannot process refund due to invalid amount.")
+                    return redirect('order_details', order_id=item.order.id)
+                print(f"Refund amount: {refund_amount}, Item price: {item.price}, Quantity: {item.quantity}")
+
+                # Update Wallet
+                wallet, created = Wallet.objects.get_or_create(user=request.user)
+                print(f"Wallet created: {created}, Initial balance: {wallet.balance}")
+                wallet.balance += refund_amount
+                wallet.save()
+                updated_wallet = Wallet.objects.get(user=request.user)
+                print(f"Updated wallet balance: {updated_wallet.balance}")
+
+                # Create WalletTransaction
+                try:
+                    WalletTransaction.objects.create(
+                        wallet=wallet,
+                        order=item.order,
+                        amount=refund_amount,
+                        transaction_type='credit',
+                        status='completed',
+                        description=f"Refund for canceled item: {item.product.name or 'Unknown Product'}"
+                    )
+                    print("Wallet transaction created successfully")
+                except Exception as e:
+                    print(f"Error creating wallet transaction: {str(e)}")
+                    messages.error(request, f"Failed to record refund transaction: {str(e)}")
+                    return redirect('order_details', order_id=item.order.id)
+
+                messages.success(request, f"Product canceled and ₹{refund_amount} refunded to your wallet.")
+        except Exception as e:
+            print(f"Error during cancellation: {str(e)}")
+            messages.error(request, f"An error occurred while processing the cancellation: {str(e)}")
         return redirect('order_details', order_id=item.order.id)
-    
+
     context = {
         'item_id': item.id,
         'order_id': item.order.id,
     }
-    print("Rendering cancel_product.html")  
     return render(request, 'cancel_product.html', context)
 
 

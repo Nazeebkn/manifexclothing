@@ -12,17 +12,13 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def wallet(request):
-    # Get the authenticated user
     user = request.user
 
-    # Get or create the user's wallet
     wallet, created = Wallet.objects.get_or_create(user=user, defaults={'balance': 0.00})
     logger.debug(f"Wallet for user {user.id}: balance={wallet.balance}, created={created}")
 
-    # Get the wallet balance
     wallet_balance = wallet.balance
 
-    # Filter transactions based on the selected filter
     filter_type = request.GET.get('filter', 'all')
     transactions = WalletTransaction.objects.filter(wallet=wallet).order_by('-created_at')
     if filter_type == 'credit':
@@ -30,7 +26,6 @@ def wallet(request):
     elif filter_type == 'debit':
         transactions = transactions.filter(transaction_type='debit')
 
-    # Paginate the transactions (10 per page)
     paginator = Paginator(transactions, 10)
     page = request.GET.get('page', 1)
     try:
@@ -40,14 +35,12 @@ def wallet(request):
     except EmptyPage:
         transactions = paginator.page(paginator.num_pages)
 
-    # Get the user's profile (assuming a UserProfile model exists)
     try:
         user_profile = user.userprofile
     except AttributeError:
         user_profile = None
         logger.warning(f"No UserProfile for user {user.id}")
 
-    # Prepare the context for the template
     context = {
         'wallet_balance': wallet_balance,
         'transactions': transactions,
@@ -68,7 +61,6 @@ def wallet_management(request):
     """
     transactions = WalletTransaction.objects.all().order_by('-created_at')
 
-    # Paginate the transactions (10 per page)
     paginator = Paginator(transactions, 10)
     page = request.GET.get('page', 1)
     try:
@@ -84,30 +76,36 @@ def wallet_management(request):
     return render(request, 'wallet_management.html', context)
 
 
+ 
+
 @login_required
 def wallet_transaction_detail(request, transaction_id):
     transaction = get_object_or_404(WalletTransaction, transaction_id=transaction_id)
     user = transaction.wallet.user
 
-    # Determine the source of the transaction
     source = "Unknown"
     order_link = None
 
     if transaction.order:
-        logger.debug(f"Order ID: {transaction.order.id}, Status: {transaction.order.status}")
+        print(f"Order ID: {transaction.order.id}, Status: {transaction.order.status}")
         if transaction.order.status == 'returned':
             source = f"Order Returned (Order ID: {transaction.order.id})"
             order_link = reverse('order_management_details', args=[transaction.order.id])
-            logger.debug(f"Order link set to: {order_link}")
+            print(f"Order link set to: {order_link}")
+        elif transaction.description and 'canceled item' in transaction.description.lower():
+
+            source = f"Item Cancellation (Order ID: {transaction.order.id})"
+            order_link = reverse('order_management_details', args=[transaction.order.id])
+            print(f"Identified as item cancellation refund")
         else:
             source = f"Order (Order ID: {transaction.order.id}, Status: {transaction.order.status.capitalize()})"
-            logger.debug(f"Order status '{transaction.order.status}' does not match 'returned'")
+            print(f"Order status '{transaction.order.status}' does not match 'returned' or 'canceled'")
     elif transaction.transaction_type == 'credit' and not transaction.order:
-        # Assume credit transactions without an order are referrals
         source = "Referral"
-        logger.debug(f"Transaction identified as Referral (ID: {transaction.transaction_id})")
+        print(f"Transaction identified as Referral (ID: {transaction.transaction_id})")
     else:
-        logger.debug(f"No order or referral identified for transaction ID: {transaction.transaction_id}")
+        source = "Unknown"
+        print(f"No order or referral identified for transaction ID: {transaction.transaction_id}")
 
     context = {
         'transaction': transaction,
