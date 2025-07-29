@@ -195,6 +195,14 @@
       cursor: not-allowed;
       background-color: #f9f9f9;
     }
+    .product-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .product-list li {
+      margin-bottom: 5px;
+    }
     @media (max-width: 768px) {
       .container {
         padding: 20px;
@@ -234,6 +242,9 @@
       }
       .pagination__link {
         padding: 6px 10px;
+        font-size: 1.2rem;
+      }
+      .product-list li {
         font-size: 1.2rem;
       }
     }
@@ -292,7 +303,7 @@
               <li class="account__menu--list"><a href="{% url 'wallet' %}">Wallet</a></li>
               <li class="account__menu--list"><a href="{% url 'available_coupons' %}">Coupons</a></li>
               <li class="account__menu--list"><a href="{% url 'referrals' %}">Refferals</a></li>
-              <li class="account__menu--list"><a href="login.html">Log Out</a></li>
+              <li class="account__menu--list"><a href="{% url 'logout' %}">Log Out</a></li>
             </ul>
           </div>
           <div class="account__wrapper">
@@ -303,7 +314,7 @@
                   <thead>
                     <tr>
                       <th>Order ID</th>
-                      <th>Product</th>
+                      <th>Products</th>
                       <th>Total</th>
                       <th>Status</th>
                       <th>Payment Type</th>
@@ -314,28 +325,32 @@
                   </thead>
                   <tbody>
                     {% for order in orders %}
-                      {% for item in order.items.all %}
-                        <tr>
-                          <td>{{ order.id }}</td>
-                          <td>{{ item.size.variant.product.name|default:"Unknown Product" }}</td>
-                          <td>₹{{ order.total_price|floatformat:2 }}</td>
-                          <td>{{ item.status|title }}</td>
-                          <td>{{ order.payment_method }}</td>
-                          <td>{{ order.created_at|date:"F j, Y" }}</td>
-                          <td>
-                            <a href="{% url 'order_details' order.id %}" class="action-btn">View Details</a>
-                          </td>
-                          <td>
-                            {% if order.status == 'completed' %}
-                              <a href="{% url 'generate_invoice' order.id %}" class="action-btn">Invoice</a>
-                            {% endif %}
-                          </td>
-                        </tr>
-                      {% empty %}
-                        <tr>
-                          <td colspan="8">No items in this order.</td>
-                        </tr>
-                      {% endfor %}
+                      <tr>
+                        <td>{{ order.id }}</td>
+                        <td>
+                          <ul class="product-list">
+                            {% for item in order.items.all %}
+                              <li>{{ item.size.variant.product.name|default:"Unknown Product" }}</li>
+                            {% empty %}
+                              <li>No items in this order.</li>
+                            {% endfor %}
+                          </ul>
+                        </td>
+                        <td>₹{{ order.total_price|floatformat:2 }}</td>
+                        <td>{{ order.status|title }}</td>
+                        <td>{{ order.payment_method }}</td>
+                        <td>{{ order.created_at|date:"F j, Y" }}</td>
+                        <td>
+                          <a href="{% url 'order_details' order.id %}" class="action-btn">View Details</a>
+                        </td>
+                        <td>
+                          {% if order.status == 'completed' %}
+                            <a href="{% url 'generate_invoice' order.id %}" class="action-btn">Invoice</a>
+                          {% else %}
+                            <span class="action-btn disabled" style="background: #ccc; cursor: not-allowed;">Invoice</span>
+                          {% endif %}
+                        </td>
+                      </tr>
                     {% endfor %}
                   </tbody>
                 </table>
