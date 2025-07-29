@@ -29,10 +29,8 @@ from django.views.decorators.cache import never_cache
 
 # Generate 4-digit OTP
 
-# @never_cache
-# def generate_otp():
-#     otp = random.randint(0, 9999)
-#     return str(otp).zfill(4)
+
+
 
 # Send OTP to email
  
@@ -44,7 +42,6 @@ def send_otp_email(email, otp):
         send_mail(subject, message, "your_gmail.com", [email])
         return True
     except Exception as e:
-        print(f"Error sending email: {e}")
         return False
 
 # Password validation
@@ -63,6 +60,9 @@ def validate_password(password):
         return False, "Password must contain at least one special character."
     return True, ""
 
+
+def generate_otp():
+    return str(random.randint(1000, 9999))
 
 def register(request):
    
@@ -133,10 +133,8 @@ def register(request):
 
 
 
-        
-        print(f"Your sending OTP is {otp}")
-
-        # otp = generate_otp()   
+    
+        otp = generate_otp()
         expires_at = django_timezone.now() + timedelta(minutes=1)
 
         request.session['otp'] = otp
@@ -304,8 +302,6 @@ def login_user(request):
                 user = authenticate(request, username=user_obj.username, password=password)
                 
             except User.DoesNotExist as e:
-                print(str(e))
-
                 user = None
 
         if user is not None:
@@ -389,7 +385,6 @@ def forgot_password(request):
             messages.success(request, 'Check your email for the OTP.')
             return render(request,'verify_otp.html') 
         except Exception as e:
-            print(f"Error sending email: {e}")
             messages.error(request, '"Unable to send OTP". Try again.')
             return render(request, 'forgot_password.html')
 
