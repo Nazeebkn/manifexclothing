@@ -24,7 +24,6 @@ razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZOR
 @login_required 
 def payment(request):
     order_data = request.session.get('order_data')
-    print('testttt', order_data)
     if not order_data or order_data.get('payment_method') != 'razorpay':
         messages.error(request, "Invalid payment session.")
         return redirect('checkout')
@@ -75,7 +74,6 @@ def verify_payment(request):
             messages.error(request, "Order data not found.")
             return JsonResponse({'success': False, 'message': 'Order data not found.', 'redirect': 'order_failure'})
 
-        print('testttt', order_data['subtotal'], order_data['discount'], order_data['total'])
 
         with transaction.atomic():
             address = get_object_or_404(Address, id=order_data['address_id'])

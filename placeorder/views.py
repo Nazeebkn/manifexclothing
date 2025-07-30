@@ -50,11 +50,14 @@ def place_order(request):
                     for item in cart_items
                 )
 
-        if payment_method == 'razorpay':
+        if subtotal >= 1000:
             shipping = Decimal('0.00')
         else:
             shipping = Decimal('50.00')
-        discount = Decimal('0.00')
+
+
+        total = subtotal - discount + shipping
+
 
         if coupon_code:
             try:
