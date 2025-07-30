@@ -36,6 +36,11 @@ class ProductVariant(models.Model):
 
     def __str__(self):
         return f"{self.product.name} - {self.color}"
+    
+
+    @property
+    def final_offer_price(self):
+        return self.product.price 
 
 class Size(models.Model):
     size = models.CharField(max_length=15)

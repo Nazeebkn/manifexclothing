@@ -21,7 +21,7 @@ from django.utils import timezone
 
 razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
-@login_required
+@login_required 
 def payment(request):
     order_data = request.session.get('order_data')
     print('testttt', order_data)
@@ -36,12 +36,12 @@ def payment(request):
     context = {
         'razorpay_key_id': settings.RAZORPAY_KEY_ID,
         'razorpay_order_id': order_data.get('razorpay_order_id'),
-        'amount': int(order_data['total'] * 100),  # Amount in paise
+        'amount': int((order_data['subtotal'] - order_data.get('discount', 0)) * 100),
         'currency': 'INR',
         'name': request.user.get_full_name() or request.user.username,
         'email': request.user.email,
         'contact': Address.objects.get(id=order_data['address_id']).phone_number,
-        'total': order_data['subtotal']
+        'total': order_data['total']
     }
     return render(request, 'payment.html', context)
 
@@ -132,16 +132,14 @@ def order_failure(request):
         messages.error(request, "No order data available.")
         return redirect('checkout')
     
-    # Parse created_at from string to datetime if needed, or use current time
     created_at = timezone.now()
     if 'created_at' in order_data:
         from datetime import datetime
         try:
             created_at = datetime.strptime(order_data['created_at'], '%Y-%m-%d %H:%M:%S')
-            # If timezone support is needed, make it timezone-aware
             created_at = timezone.make_aware(created_at, timezone.get_current_timezone())
         except ValueError:
-            pass  # Fallback to current time if parsing fails
+            pass  
 
     context = {
         'order_data': order_data,

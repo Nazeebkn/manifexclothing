@@ -43,8 +43,17 @@ def place_order(request):
             return redirect('checkout')
 
         address = get_object_or_404(Address, id=address_id, user=user)
-        subtotal = sum(item.get_total_price() for item in cart_items)
-        shipping = Decimal('50.00')
+        subtotal = sum(
+                    item.variant.final_offer_price * item.quantity
+                    if item.variant.final_offer_price > 0
+                    else item.variant.original_price * item.quantity
+                    for item in cart_items
+                )
+
+        if payment_method == 'razorpay':
+            shipping = Decimal('0.00')
+        else:
+            shipping = Decimal('50.00')
         discount = Decimal('0.00')
 
         if coupon_code:
