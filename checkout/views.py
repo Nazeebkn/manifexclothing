@@ -44,7 +44,7 @@ def checkout(request):
         messages.error(request, f"Error calculating subtotal: {str(e)}")
         return redirect('cart')
 
-    shipping = Decimal('0.00') if subtotal >= Decimal('1000.00') else Decimal('40.00')
+    shipping = Decimal('0.00') if subtotal >= Decimal('1000.00') else Decimal('50.00')
     cod_allowed = subtotal <= Decimal('1000.00') 
     discount = Decimal('0.00')
     applied_coupon = None
@@ -53,9 +53,7 @@ def checkout(request):
     if coupon_code:
         try:
             coupon = Coupon.objects.get(code=coupon_code)
-            print("Applying coupon from session:", coupon.__dict__)
             min_purchase = Decimal(str(coupon.minimum_purchase_amount))
-            print("Subtotal:", subtotal, "Min purchase:", min_purchase)
             if subtotal >= min_purchase:
                 if coupon.discount_type == 'percentage':
                     discount_percentage = Decimal(str(coupon.discount_percentage))
@@ -66,7 +64,6 @@ def checkout(request):
                 else:
                     discount = Decimal(str(coupon.discount_value))
                 applied_coupon = coupon
-                print("Discount applied:", discount)
             else:
                 messages.error(request, f"Minimum purchase of ₹{min_purchase} required.")
                 del request.session['coupon_code']
@@ -101,7 +98,6 @@ def checkout(request):
         usage_limit__gt=F('usage_count')
     ).order_by('-created_at')[:2]
 
-    print("Available coupons:", list(available_coupons.values('code', 'is_active', 'valid_from', 'valid_until', 'usage_limit', 'usage_count')))
 
     addresses = Address.objects.filter(user=request.user)
 

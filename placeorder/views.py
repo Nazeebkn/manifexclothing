@@ -55,8 +55,8 @@ def place_order(request):
         else:
             shipping = Decimal('50.00')
 
+        discount = Decimal('0.00')
 
-        total = subtotal - discount + shipping
 
 
         if coupon_code:
@@ -128,6 +128,10 @@ def place_order(request):
                     payment_method=payment_method,
                     status='pending'
                 )
+
+                order.shipping = Decimal('0.00') if order.subtotal >= 1000 else Decimal('50.00')
+                order.save()
+
                 if coupon_code:
                     order.coupon = Coupon.objects.get(code=coupon_code)
                     order.save()
