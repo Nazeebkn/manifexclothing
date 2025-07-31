@@ -337,7 +337,7 @@
                     
                       <td>{{ entry.item.quantity }}</td>
                       <td>₹{{ entry.item.price|floatformat:2 }}</td>
-                      <td>₹{{ entry.total_price|floatformat:2 }}</td>
+                      <td>₹{{ order.total_price|floatformat:2 }}</td>
                       <td>
                           <span class="item-status-button item-status-{{ entry.item.status }}">{{ entry.item.status }}</span>
                       </td>

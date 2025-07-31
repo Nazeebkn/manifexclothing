@@ -129,7 +129,7 @@ def place_order(request):
                     status='pending'
                 )
 
-                order.shipping = Decimal('0.00') if order.subtotal >= 1000 else Decimal('50.00')
+                order.shipping = Decimal('0.00') if subtotal >= 1000 else Decimal('50.00')
                 order.save()
 
                 if coupon_code:

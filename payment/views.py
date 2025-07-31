@@ -17,6 +17,8 @@ from coupon.models import Coupon
 from products.models import ProductVariant,Size
 from cart.models import Cart, CartItem
 from django.utils import timezone
+from decimal import Decimal
+
 # Create your views here.
 
 razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
@@ -35,7 +37,7 @@ def payment(request):
     context = {
         'razorpay_key_id': settings.RAZORPAY_KEY_ID,
         'razorpay_order_id': order_data.get('razorpay_order_id'),
-        'amount': int((order_data['subtotal'] - order_data.get('discount', 0)) * 100),
+        'amount': int(order_data['total'] * 100),  # Use total instead of subtotal - discount
         'currency': 'INR',
         'name': request.user.get_full_name() or request.user.username,
         'email': request.user.email,
@@ -80,13 +82,13 @@ def verify_payment(request):
             order = Order.objects.create(
                 user=request.user,
                 shipping_address=address,
-                total_price=order_data['subtotal'],
+                total_price=order_data['total'],
                 discount_coupon_amount=order_data['discount'],
                 payment_method='razorpay',
                 razorpay_order_id=razorpay_order_id,
                 razorpay_payment_id=razorpay_payment_id,
                 status='confirmed',
-                payment_status='Paid'
+                payment_status='Paid',
             )
             if order_data.get('coupon_code'):
                 order.coupon = Coupon.objects.get(code=order_data['coupon_code'])
