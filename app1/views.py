@@ -21,13 +21,14 @@ from products.models import Product,ProductVariant
 from .models import Referral
 from wallet.models import Wallet, WalletTransaction
 from django.views.decorators.cache import never_cache
+import logging
+logger = logging.getLogger(__name__)
 
 
 
 
 
 
-# Generate 4-digit OTP
 
 
 
@@ -37,14 +38,13 @@ from django.views.decorators.cache import never_cache
 def send_otp_email(email, otp):
     subject = "Your OTP Code"
     message = f"Your OTP Code is: {otp}"
-    print(f"your OTP is {otp}")
+    logger.info(f"Sending OTP to {email}: {otp}")
     try:
         send_mail(subject, message, "your_gmail.com", [email])
         return True
     except Exception as e:
         return False
 
-# Password validation
 def validate_password(password):
     if password is None:
         return False, "Password cannot be empty."
@@ -268,7 +268,7 @@ def resend_otp(request):
             
         new_otp = random.randint(0, 9999)
         # new_otp = generate_otp()
-        print(new_otp)
+        logger.info(f"Resending OTP: {new_otp}")
         expires_at = django_timezone.now() + timedelta(minutes=1)
         request.session['otp'] = new_otp
         request.session['otp_expires_at'] = int(expires_at.timestamp())  
@@ -286,7 +286,7 @@ def login_user(request):
         email = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
         remember_me = request.POST.get('remember_me') == 'on'
-        print(email,password)
+        logger.info(f"Login attempt for user: {email}")
 
 
         if not email or not password:
@@ -348,6 +348,7 @@ def otp(request):
 
 def logout_view(request):
     logout(request)
+    messages.success(request, "You have successfully logged out.")
     return redirect('index')  
 
 
@@ -370,7 +371,7 @@ def forgot_password(request):
     
         otp = ''.join([str(random.randint(0, 9)) for _ in range(4)])
         request.session['otp']=otp
-        print(f"Your OTP is {otp}")
+        logger.info(f"Password reset OTP for {email}: {otp}")
         expires_at = django_timezone.now() + timedelta(minutes=1)
 
         request.session['otp_expires_at'] = int(expires_at.timestamp())
