@@ -15,6 +15,18 @@ from django.http import JsonResponse
 from .models import Profile
 from app1.models import Referral
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+
+
+
+
+
+
+
 
 @login_required
 def user_profile(request):
@@ -229,7 +241,7 @@ def change_password(request):
 def address(request):
 
     addresses = Address.objects.filter(user=request.user)
-    print(f"Addresses for user {request.user}: {addresses}")
+    logger.debug(f"Addresses for user {request.user}: {addresses}")
     return render(request, 'address.html', {'addresses':addresses})
   
 
