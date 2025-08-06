@@ -392,53 +392,71 @@ def generate_invoice(request, order_id):
                                    
 
 
+logger = logging.getLogger(__name__)
+
 @login_required
 def cancel_product(request, item_id):
     item = get_object_or_404(OrderItem, id=item_id, order__user=request.user)
-    logger.debug(f"Item ID: {item.id}, Status: {item.status}, Can cancel: {item.can_update_status('canceled')}")    
-
+    logger.debug(f"Item ID: {item.id}, Status: {item.status}, Can cancel: {item.can_update_status('canceled')}")
+    
     if item.status == 'canceled':
         messages.error(request, "This product has already been canceled.")
         return redirect('order_details', order_id=item.order.id)
-
+    
     if not item.can_update_status('canceled'):
         messages.error(request, f"This product cannot be canceled because it is in '{item.status}' status.")
         return redirect('order_details', order_id=item.order.id)
-
+    
     if request.method == 'POST':
         logger.debug(f"POST request received: {request.POST}")
         cancel_reason = request.POST.get('cancel_reason')
         if not cancel_reason:
             messages.error(request, "Please provide a cancellation reason.")
             return redirect('order_details', order_id=item.order.id)
-
+        
         try:
             with transaction.atomic():
+                item_total = Decimal(str(item.price)) * Decimal(str(item.quantity))
+                if item_total <= 0:
+                    logger.error(f"Invalid item total: Price={item.price}, Quantity={item.quantity}")
+                    messages.error(request, "Cannot process refund due to invalid price or quantity.")
+                    return redirect('order_details', order_id=item.order.id)
+                
+                order_items = OrderItem.objects.filter(order=item.order)
+                order_subtotal = sum(
+                    Decimal(str(oi.price)) * Decimal(str(oi.quantity))
+                    for oi in order_items
+                )
+                
+                order = item.order
+                if order_subtotal > 0:
+                    discount_ratio = order.total_price / order_subtotal
+                else:
+                    discount_ratio = Decimal('1.0')
+                    logger.warning(f"Order subtotal is zero for order ID: {order.id}")
+                
+                refund_amount = item_total * discount_ratio
+                refund_amount = refund_amount.quantize(Decimal('0.01'))  
+                
+                if refund_amount <= 0:
+                    logger.error(f"Invalid refund amount: {refund_amount} for item ID: {item.id}")
+                    messages.error(request, "Cannot process refund due to invalid amount.")
+                    return redirect('order_details', order_id=item.order.id)
+                
+                logger.debug(f"Refund amount: {refund_amount}, Item total: {item_total}, Discount ratio: {discount_ratio}")
+                
                 item.status = 'canceled'
                 item.cancel_reason = cancel_reason
                 item.save()
                 logger.debug(f"OrderItem updated: Status={item.status}, Cancel reason={item.cancel_reason}")
-
-                if not item.price or not item.quantity or item.price <= 0 or item.quantity <= 0:
-                    logger.error(f"Invalid price or quantity: Price={item.price}, Quantity={item.quantity}")
-                    messages.error(request, "Cannot process refund due to invalid price or quantity.")
-                    return redirect('order_details', order_id=item.order.id)
                 
-                refund_amount = Decimal(str(item.price)) * Decimal(str(item.quantity))
-                if refund_amount <= 0:
-                    logger.error(f"Invalid refund amount: {refund_amount}")
-                    messages.error(request, "Cannot process refund due to invalid amount.")
-                    return redirect('order_details', order_id=item.order.id)
-                logger.debug(f"Refund amount: {refund_amount}, Item price: {item.price}, Quantity: {item.quantity}")
-
-                wallet, created = Wallet.objects.get_or_create(user=request.user)
+                wallet, created = Wallet.objects.get_or_create(user=request.user, defaults={'balance': 0.00})
                 logger.debug(f"Wallet created: {created}, Initial balance: {wallet.balance}")
                 wallet.balance += refund_amount
                 wallet.save()
                 updated_wallet = Wallet.objects.get(user=request.user)
                 logger.debug(f"Updated wallet balance: {updated_wallet.balance}")
-
-                # Create WalletTransaction
+                
                 try:
                     WalletTransaction.objects.create(
                         wallet=wallet,
@@ -448,18 +466,18 @@ def cancel_product(request, item_id):
                         status='completed',
                         description=f"Refund for canceled item: {item.size.variant.product.name or 'Unknown Product'}"
                     )
-                    print("Wallet transaction created successfully")
+                    logger.debug("Wallet transaction created successfully")
                 except Exception as e:
-                    print(f"Error creating wallet transaction: {str(e)}")
+                    logger.error(f"Error creating wallet transaction: {str(e)}")
                     messages.error(request, f"Failed to record refund transaction: {str(e)}")
                     return redirect('order_details', order_id=item.order.id)
-
+                
                 messages.success(request, f"Product canceled and ₹{refund_amount} refunded to your wallet.")
         except Exception as e:
             logger.error(f"Error during cancellation: {str(e)}")
             messages.error(request, f"An error occurred while processing the cancellation: {str(e)}")
         return redirect('order_details', order_id=item.order.id)
-
+    
     context = {
         'item_id': item.id,
         'order_id': item.order.id,
