@@ -123,7 +123,6 @@ def remove_from_wishlist(request, wishlist_item_id):
 def add_to_wishlist(request,product_id):
 
     if request.method == 'POST':
-        print(product_id)
         size_id = request.POST.get("size_id")
         print(size_id)
 
